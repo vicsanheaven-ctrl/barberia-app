@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Rodríguez Barber Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans">
+    
+    <!-- Barra de Navegación -->
+    <header class="flex justify-between items-center p-6 border-b border-gray-800">
+        <div class="text-xl font-bold tracking-widest uppercase">
+            The Rodríguez<br>
+            <span class="text-sm text-gray-400">Barber Studio</span>
+        </div>
+        <nav class="hidden md:flex space-x-6 text-sm font-bold text-gray-300">
+            <a href="#" class="hover:text-white transition">INICIO</a>
+            <a href="#" class="hover:text-white transition">BENEFICIOS</a>
+            <a href="#" class="hover:text-white transition">GALERÍA</a>
+            <a href="#" class="hover:text-white transition">UBICACIÓN & HORARIOS</a>
+        </nav>
+        <a href="dashboard.html" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 transition inline-block">ENTRAR</a>
+    </header>
+
+    <!-- Sección Principal (Hero) -->
+    <main class="flex flex-col md:flex-row items-center justify-between px-6 py-20 max-w-7xl mx-auto">
+        <div class="md:w-1/2 space-y-6">
+            <h1 class="text-5xl md:text-6xl font-extrabold uppercase leading-tight tracking-tight">
+                Donde el diseño, la precisión y el minimalismo se unen.
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Estudio de barbería contemporánea de alta precisión. Técnicas clásicas, navaja libre japonesa, toallas calientes al vapor de eucalipto y cortes a medida bajo estrictos estándares anatómicos.
+            </p>
+            <div class="flex space-x-4 pt-4">
+                <!-- Aquí está el botón ya modificado y conectado a reservas.html -->
+                <a href="reservas.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded text-sm transition text-center inline-block">
+                    RESERVAR CITA AHORA
+                </a>
+                <button class="bg-transparent border border-gray-500 hover:border-white text-white font-bold py-3 px-6 rounded text-sm transition">
+                    EXPLORAR SERVICIOS & TARIFAS
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenedor para la imagen -->
+        <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
+            <div class="w-full max-w-md h-96 bg-gray-900 rounded-lg flex items-center justify-center border border-gray-800 shadow-2xl">
+                <span class="text-gray-600 font-bold">[Aquí irá la foto de tu barbería]</span>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

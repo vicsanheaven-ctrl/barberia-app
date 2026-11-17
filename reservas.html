@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas - The Rodríguez Barber</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#111111] text-white font-sans min-h-screen">
+    
+    <!-- Barra Superior -->
+    <header class="p-6 border-b border-gray-800 flex justify-between items-center">
+        <div class="text-xl font-bold tracking-widest uppercase">The Rodríguez</div>
+        <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">Volver al Inicio</a>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <div class="max-w-6xl mx-auto px-6 py-8">
+        
+        <!-- Indicador de pasos visual -->
+        <div class="flex space-x-2 text-xs font-bold uppercase tracking-wider mb-8 overflow-x-auto">
+            <div class="bg-green-600 text-white px-4 py-2 rounded flex items-center">
+                <span class="mr-2">✓</span> 01. SERVICIO
+            </div>
+            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">02. BARBERO</div>
+            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">03. FECHA & HORA</div>
+            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">04. CONFIRMACIÓN</div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Columna Izquierda: Selección de Servicios -->
+            <div class="md:w-2/3">
+                <h2 class="text-2xl font-bold uppercase mb-6">01 SELECCIONA TU SERVICIO</h2>
+                
+                <div class="space-y-4">
+                    <!-- Opción 1 -->
+                    <label class="block border border-gray-700 hover:border-white rounded p-4 cursor-pointer transition flex justify-between items-center">
+                        <div>
+                            <input type="radio" name="servicio" class="mr-3">
+                            <span class="font-bold text-lg uppercase">Perfilado de Barba</span>
+                            <p class="text-sm text-gray-500 ml-7 mt-1">30 min</p>
+                        </div>
+                        <div class="font-bold text-xl">$11.990</div>
+                    </label>
+
+                    <!-- Opción 2 -->
+                    <label class="block border border-gray-700 hover:border-white rounded p-4 cursor-pointer transition flex justify-between items-center">
+                        <div>
+                            <input type="radio" name="servicio" class="mr-3">
+                            <span class="font-bold text-lg uppercase">Perfilado de Barba + Corte</span>
+                            <p class="text-sm text-gray-500 ml-7 mt-1">60 min</p>
+                        </div>
+                        <div class="font-bold text-xl">$19.990</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Resumen -->
+            <div class="md:w-1/3">
+                <div class="bg-[#1a1a1a] border border-gray-800 rounded p-6 sticky top-6">
+                    <h3 class="font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2">04 RESUMEN DE RESERVA</h3>
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-400">Total estimado</span>
+                        <span class="font-bold text-2xl text-white">$0</span>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-6">Selecciona un servicio para continuar con tu reserva.</p>
+
+                    <button class="w-full bg-gray-700 text-gray-400 font-bold py-3 rounded cursor-not-allowed uppercase text-sm">
+                        Siguiente Paso
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
