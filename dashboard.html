@@ -3,88 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - The Rodríguez Barber</title>
+    <title>Panel de Control - FUTBARBER</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .text-gold { color: #d4af37; }
+        .bg-gold { background-color: #d4af37; }
+        .border-gold { border-color: #d4af37; }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen flex">
+<body class="bg-[#0a0a0a] text-white font-sans min-h-screen flex flex-col md:flex-row">
 
-    <!-- Menú Lateral (Sidebar) -->
-    <aside class="w-64 bg-[#111111] text-white min-h-screen flex flex-col justify-between">
+    <!-- Menú Lateral -->
+    <aside class="w-full md:w-64 bg-[#050505] border-b md:border-b-0 md:border-r border-[#222] flex flex-col justify-between">
         <div>
-            <div class="p-6 border-b border-gray-800">
-                <h1 class="text-lg font-bold tracking-widest uppercase">The Rodríguez</h1>
-                <p class="text-xs text-gray-500 uppercase mt-1">Panel de Administración</p>
+            <div class="p-6 border-b border-[#222]">
+                <h1 class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</h1>
+                <p class="text-[11px] text-gray-500 uppercase tracking-widest mt-1">Panel de Administración</p>
             </div>
-            <nav class="p-4 space-y-2 text-sm text-gray-400 font-medium">
-                <a href="#" class="block px-4 py-2 hover:bg-gray-800 hover:text-white rounded transition">Dashboard General</a>
-                <a href="#" class="block px-4 py-2 bg-blue-600 text-white rounded shadow">Agenda & Horarios</a>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-800 hover:text-white rounded transition">Equipo & Barberos</a>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-800 hover:text-white rounded transition">Servicios & Tarifas</a>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-800 hover:text-white rounded transition">Clientes & Usuarios</a>
+            <nav class="p-4 space-y-2 text-sm font-bold">
+                <a href="dashboard.html" class="block px-4 py-3 bg-gold text-black rounded uppercase tracking-wider">Agenda de Citas</a>
+                <a href="reservas.html" class="block px-4 py-3 text-gray-400 hover:bg-[#111] hover:text-gold rounded uppercase tracking-wider transition">+ Nueva Cita</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-gray-800">
-            <a href="index.html" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition text-center border border-gray-700">
+        <div class="p-4 border-t border-[#222]">
+            <a href="index.html" class="block px-4 py-2 text-xs text-gray-400 hover:text-white hover:border-gold border border-[#333] rounded text-center uppercase tracking-widest transition">
                 Ver Sitio Público
             </a>
         </div>
     </aside>
 
     <!-- Contenido Principal -->
-    <main class="flex-1">
-        <!-- Barra Superior -->
-        <header class="bg-white p-6 shadow-sm border-b border-gray-200 flex justify-between items-center">
-            <div class="text-sm text-gray-500">Panel de Control / <span class="font-bold text-gray-800">Agenda & Horarios</span></div>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded text-sm transition shadow-md">
-                + NUEVA CITA MANUAL
+    <main class="flex-1 p-6 md:p-8 overflow-x-hidden">
+        
+        <!-- Encabezado -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-[#222] pb-6">
+            <div>
+                <h2 class="text-2xl font-black uppercase tracking-widest">Gestión de Citas</h2>
+                <p class="text-xs text-gray-400 mt-1">Sincronizado en tiempo real con Supabase · Bogotá (UTC-5)</p>
+            </div>
+            <button onclick="cargarCitas()" class="bg-[#111] border border-gold text-gold hover:bg-gold hover:text-black font-bold py-2 px-5 rounded text-xs uppercase tracking-widest transition">
+                Actualizar Lista
             </button>
         </header>
 
-        <!-- Área de Trabajo -->
-        <div class="p-8">
-            <h2 class="text-2xl font-bold uppercase mb-2">Agenda & Configuración de Horarios</h2>
-            <p class="text-gray-500 text-sm mb-8">Disponibilidad semanal, calendario y excepciones de apertura.</p>
+        <!-- Tarjetas de Resumen (KPIs) -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-[#111] border border-[#222] p-5 rounded">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Citas</p>
+                <p id="kpi-total" class="text-3xl font-black text-white">0</p>
+            </div>
+            <div class="bg-[#111] border border-[#222] p-5 rounded">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Pendientes</p>
+                <p id="kpi-pendientes" class="text-3xl font-black text-gold">0</p>
+            </div>
+            <div class="bg-[#111] border border-[#222] p-5 rounded">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Completadas</p>
+                <p id="kpi-completadas" class="text-3xl font-black text-green-400">0</p>
+            </div>
+            <div class="bg-[#111] border border-[#222] p-5 rounded">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Ingresos Estimados</p>
+                <p id="kpi-ingresos" class="text-3xl font-black text-white">$0</p>
+            </div>
+        </section>
 
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                    <h3 class="font-bold uppercase text-gray-700 text-sm">Disponibilidad Semanal Regulada</h3>
-                    <button class="text-blue-600 text-sm font-bold hover:underline">EDITAR HORARIO</button>
-                </div>
-                
-                <!-- Tabla de Horarios -->
+        <!-- Tabla de Reservas -->
+        <section class="bg-[#111] border border-[#222] rounded overflow-hidden">
+            <div class="p-4 border-b border-[#222] flex justify-between items-center bg-[#0d0d0d]">
+                <h3 class="font-bold uppercase text-xs tracking-widest text-gold">Reservas Registradas</h3>
+                <span id="estado-carga" class="text-xs text-gray-500">Cargando...</span>
+            </div>
+
+            <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 text-gray-500 font-bold uppercase text-xs">
+                    <thead class="bg-[#0a0a0a] text-gray-500 uppercase text-xs border-b border-[#222]">
                         <tr>
-                            <th class="px-6 py-4">Día</th>
-                            <th class="px-6 py-4">Apertura</th>
-                            <th class="px-6 py-4">Cierre</th>
-                            <th class="px-6 py-4">Estado</th>
+                            <th class="px-5 py-4">Fecha y Hora</th>
+                            <th class="px-5 py-4">Cliente</th>
+                            <th class="px-5 py-4">Servicio</th>
+                            <th class="px-5 py-4">Barbero / Pago</th>
+                            <th class="px-5 py-4">Estado</th>
+                            <th class="px-5 py-4 text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 font-bold text-gray-800">LUNES</td>
-                            <td class="px-6 py-4 text-gray-600">08:00</td>
-                            <td class="px-6 py-4 text-gray-600">20:00</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ABIERTO</span></td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 font-bold text-gray-800">MARTES</td>
-                            <td class="px-6 py-4 text-gray-600">08:00</td>
-                            <td class="px-6 py-4 text-gray-600">20:00</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ABIERTO</span></td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 font-bold text-gray-800">DOMINGO</td>
-                            <td class="px-6 py-4 text-gray-400">-</td>
-                            <td class="px-6 py-4 text-gray-400">-</td>
-                            <td class="px-6 py-4"><span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">CERRADO</span></td>
-                        </tr>
+                    <tbody id="tabla-citas" class="divide-y divide-[#222]">
+                        <!-- Las filas se cargan automáticamente desde Supabase -->
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
+
     </main>
 
+    <script>
+        const supabaseUrl = 'https://oirxthfhdmgtgcpbjenx.supabase.co';
+        const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function cargarCitas() {
+            const tbody = document.getElementById('tabla-citas');
+            const estadoCarga = document.getElementById('estado-carga');
+            estadoCarga.textContent = 'Sincronizando...';
+
+            try {
+                // Traer citas junto con los datos del cliente
+                const { data, error } = await db
+                    .from('appointments')
+                    .select('*, customers(name, phone, email)')
+                    .order('starts_at', { ascending: false });
+
+                if (error) throw error;
+
+                // Calcular KPIs
+                let pendientes = 0;
+                let completadas = 0;
+                let ingresos = 0;
+
+                data.forEach(cita => {
+                    if (cita.status === 'Pendiente') pendientes++;
+                    if (cita.status === 'Completada') completadas++;
+                    if (cita.status !== 'Cancelada') ingresos += (cita.price || 0);
+                });
+
+                document.getElementById('kpi-total').textContent = data.length;
+                document.getElementById('kpi-pendientes').textContent = pendientes;
+                document.getElementById('kpi-completadas').textContent = completadas;
+                document.getElementById('kpi-ingresos').textContent = '$' + ingresos.toLocaleString('es-CO');
+
+                // Renderizar tabla
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-8 text-center text-gray-500">No hay reservas registradas todavía.</td></tr>`;
+                    estadoCarga.textContent = '0 registros';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(cita => {
+                    const fechaObj = new Date(cita.starts_at);
+                    const fechaTexto = fechaObj.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' });
+                    const horaTexto = fechaObj.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                    const nombreCliente = cita.customers?.name || 'Sin nombre';
+                    const telCliente = cita.customers?.phone || '';
+                    const linkWhatsApp = telCliente ? `https://wa.me/57${telCliente}` : '#';
+
+                    let badgeColor = 'bg-yellow-900/40 text-gold border border-gold/40';
+                    if (cita.status === 'Completada') badgeColor = 'bg-green-900/40 text-green-400 border border-green-500/40';
+                    if (cita.status === 'Cancelada') badgeColor = 'bg-red-900/40 text-red-400 border border-red-500/40';
+
+                    return `
+                        <tr class="hover:bg-[#161616] transition">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <div class="font-bold text-white">${fechaTexto}</div>
+                                <div class="text-xs text-gold font-mono">${horaTexto}</div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="font-bold text-white">${nombreCliente}</div>
+                                <a href="${linkWhatsApp}" target="_blank" class="text-xs text-green-400 hover:underline font-mono">
+                                    WhatsApp: ${telCliente}
+                                </a>
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="font-bold uppercase text-xs">${cita.service_name}</div>
+                                <div class="text-xs text-gray-400">$${(cita.price || 0).toLocaleString('es-CO')} · ${cita.duration_minutes || 0} min</div>
+                            </td>
+                            <td class="px-5 py-4 text-xs text-gray-300">
+                                ${cita.notes || '-'}
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="px-3 py-1 rounded text-[11px] font-bold uppercase ${badgeColor}">
+                                    ${cita.status || 'Pendiente'}
+                                </span>
+                            </td>
+                            <td class="px-5 py-4 text-right whitespace-nowrap space-x-2">
+                                <button onclick="cambiarEstado('${cita.id}', 'Completada')" class="bg-green-900/50 hover:bg-green-600 text-green-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">
+                                    Completar
+                                </button>
+                                <button onclick="cambiarEstado('${cita.id}', 'Cancelada')" class="bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">
+                                    Cancelar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                estadoCarga.textContent = `${data.length} citas cargadas`;
+            } catch (err) {
+                console.error(err);
+                estadoCarga.textContent = 'Error de conexión';
+                tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-8 text-center text-red-400">Error cargando citas: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function cambiarEstado(id, nuevoEstado) {
+            try {
+                const { error } = await db
+                    .from('appointments')
+                    .update({ status: nuevoEstado })
+                    .eq('id', id);
+
+                if (error) throw error;
+                cargarCitas();
+            } catch (err) {
+                alert('No se pudo actualizar el estado: ' + err.message);
+            }
+        }
+
+        // Cargar citas automáticamente al abrir la página
+        cargarCitas();
+    </script>
 </body>
 </html>

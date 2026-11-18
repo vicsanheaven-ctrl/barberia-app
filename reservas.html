@@ -3,77 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas - The Rodríguez Barber</title>
+    <title>Reservas - FUTBARBER</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .text-gold { color: #d4af37; }
+        .bg-gold { background-color: #d4af37; }
+        .border-gold { border-color: #d4af37; }
+        
+        /* Estado bloqueado para pasos pendientes */
+        .step-locked {
+            opacity: 0.35;
+            pointer-events: none;
+            user-select: none;
+            filter: grayscale(60%);
+        }
+
+        /* Estilo de tarjeta seleccionada */
+        .card-selected {
+            border-color: #d4af37 !important;
+            background-color: rgba(212, 175, 55, 0.12) !important;
+        }
+        .card-selected .check-box {
+            background-color: #d4af37 !important;
+            border-color: #d4af37 !important;
+        }
+    </style>
 </head>
-<body class="bg-[#111111] text-white font-sans min-h-screen">
-    
-    <!-- Barra Superior -->
-    <header class="p-6 border-b border-gray-800 flex justify-between items-center">
-        <div class="text-xl font-bold tracking-widest uppercase">The Rodríguez</div>
-        <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">Volver al Inicio</a>
+<body class="bg-[#0a0a0a] text-white font-sans min-h-screen pb-16">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-6 border-b border-[#222] bg-[#050505] sticky top-0 z-50">
+        <a href="index.html" class="text-3xl font-black tracking-widest text-gold uppercase">
+            FUTB💈RBER
+        </a>
+        <div class="text-xs text-gray-400 uppercase tracking-widest hidden md:block">
+            CRA 12 #188-26, Bogotá · Agenda en Línea
+        </div>
     </header>
 
-    <!-- Contenedor Principal -->
-    <div class="max-w-6xl mx-auto px-6 py-8">
-        
-        <!-- Indicador de pasos visual -->
-        <div class="flex space-x-2 text-xs font-bold uppercase tracking-wider mb-8 overflow-x-auto">
-            <div class="bg-green-600 text-white px-4 py-2 rounded flex items-center">
-                <span class="mr-2">✓</span> 01. SERVICIO
-            </div>
-            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">02. BARBERO</div>
-            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">03. FECHA & HORA</div>
-            <div class="bg-gray-800 text-gray-400 px-4 py-2 rounded">04. CONFIRMACIÓN</div>
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-8">
-            <!-- Columna Izquierda: Selección de Servicios -->
-            <div class="md:w-2/3">
-                <h2 class="text-2xl font-bold uppercase mb-6">01 SELECCIONA TU SERVICIO</h2>
-                
-                <div class="space-y-4">
-                    <!-- Opción 1 -->
-                    <label class="block border border-gray-700 hover:border-white rounded p-4 cursor-pointer transition flex justify-between items-center">
-                        <div>
-                            <input type="radio" name="servicio" class="mr-3">
-                            <span class="font-bold text-lg uppercase">Perfilado de Barba</span>
-                            <p class="text-sm text-gray-500 ml-7 mt-1">30 min</p>
-                        </div>
-                        <div class="font-bold text-xl">$11.990</div>
-                    </label>
-
-                    <!-- Opción 2 -->
-                    <label class="block border border-gray-700 hover:border-white rounded p-4 cursor-pointer transition flex justify-between items-center">
-                        <div>
-                            <input type="radio" name="servicio" class="mr-3">
-                            <span class="font-bold text-lg uppercase">Perfilado de Barba + Corte</span>
-                            <p class="text-sm text-gray-500 ml-7 mt-1">60 min</p>
-                        </div>
-                        <div class="font-bold text-xl">$19.990</div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Resumen -->
-            <div class="md:w-1/3">
-                <div class="bg-[#1a1a1a] border border-gray-800 rounded p-6 sticky top-6">
-                    <h3 class="font-bold uppercase tracking-wider mb-4 border-b border-gray-700 pb-2">04 RESUMEN DE RESERVA</h3>
-                    
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-gray-400">Total estimado</span>
-                        <span class="font-bold text-2xl text-white">$0</span>
-                    </div>
-
-                    <p class="text-sm text-gray-500 mb-6">Selecciona un servicio para continuar con tu reserva.</p>
-
-                    <button class="w-full bg-gray-700 text-gray-400 font-bold py-3 rounded cursor-not-allowed uppercase text-sm">
-                        Siguiente Paso
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Indicador de Progreso -->
+    <div class="border-b border-[#222] bg-[#0a0a0a] p-4 flex justify-center gap-6 md:gap-14 text-xs font-bold uppercase tracking-wider text-gray-600">
+        <div id="ind-1" class="text-gold flex flex-col items-center"><span class="text-base">01</span> Servicio</div>
+        <div id="ind-2" class="flex flex-col items-center"><span class="text-base">02</span> Fecha & Hora</div>
+        <div id="ind-3" class="flex flex-col items-center"><span class="text-base">03</span> Barbero</div>
+        <div id="ind-4" class="flex flex-col items-center"><span class="text-base">04</span> Pago</div>
     </div>
 
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-8 items-start">
+
+        <!-- COLUMNA IZQUIERDA: TODOS LOS PASOS EN UNA SOLA PÁGINA -->
+        <div class="w-full lg:w-2/3 space-y-10">
+
+            <!-- PASO 1: SERVICIO (Siempre habilitado) -->
+            <section id="sec-1" class="transition-all duration-300">
+                <h2 class="text-xl font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-gold">01.</span> Selecciona tu servicio
+                </h2>
+                <div class="space-y-3">
+                    <div class="service-card cursor-pointer flex justify-between items-center p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition"
+                         onclick="elegirServicio('Corte Clásico', 20000, 40, this)">
+                        <div class="flex items-center gap-4 pointer-events-none">
+                            <div class="check-box w-5 h-5 rounded border border-gray-500 transition"></div>
+                            <div>
+                                <h3 class="font-bold text-base uppercase">Corte Clásico</h3>
+                                <p class="text-xs text-gray-400">40 minutos</p>
+                            </div>
+                        </div>
+                        <span class="text-lg font-black pointer-events-none">$20.000</span>
+                    </div>
+
+                    <div class="service-card cursor-pointer flex justify-between items-center p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition"
+                         onclick="elegirServicio('Corte Degradado', 25000, 45, this)">
+                        <div class="flex items-center gap-4 pointer-events-none">
+                            <div class="check-box w-5 h-5 rounded border border-gray-500 transition"></div>
+                            <div>
+                                <h3 class="font-bold text-base uppercase">Corte Degradado</h3>
+                                <p class="text-xs text-gray-400">45 minutos</p>
+                            </div>
+                        </div>
+                        <span class="text-lg font-black pointer-events-none">$25.000</span>
+                    </div>
+
+                    <div class="service-card cursor-pointer flex justify-between items-center p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition"
+                         onclick="elegirServicio('Corte + Barba', 35000, 60, this)">
+                        <div class="flex items-center gap-4 pointer-events-none">
+                            <div class="check-box w-5 h-5 rounded border border-gray-500 transition"></div>
+                            <div>
+                                <h3 class="font-bold text-base uppercase">Corte + Barba</h3>
+                                <p class="text-xs text-gray-400">60 minutos</p>
+                            </div>
+                        </div>
+                        <span class="text-lg font-black pointer-events-none">$35.000</span>
+                    </div>
+
+                    <div class="service-card cursor-pointer flex justify-between items-center p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition"
+                         onclick="elegirServicio('Solo Barba', 15000, 20, this)">
+                        <div class="flex items-center gap-4 pointer-events-none">
+                            <div class="check-box w-5 h-5 rounded border border-gray-500 transition"></div>
+                            <div>
+                                <h3 class="font-bold text-base uppercase">Solo Barba</h3>
+                                <p class="text-xs text-gray-400">20 minutos</p>
+                            </div>
+                        </div>
+                        <span class="text-lg font-black pointer-events-none">$15.000</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 2: FECHA Y HORA (Se desbloquea al elegir servicio) -->
+            <section id="sec-2" class="step-locked transition-all duration-300 border-t border-[#222] pt-8">
+                <h2 class="text-xl font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-gold">02.</span> Selecciona Fecha y Hora
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-[#111] p-5 border border-[#333] rounded">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Día de la cita</label>
+                        <input type="date" id="inputFecha" onchange="validarFechaHora()"
+                               class="w-full bg-[#0a0a0a] border border-[#444] rounded px-4 py-3 text-white focus:border-gold focus:outline-none [color-scheme:dark]">
+                    </div>
+                    <div class="bg-[#111] p-5 border border-[#333] rounded">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Hora de inicio (10:00 - 20:00)</label>
+                        <select id="inputHora" onchange="validarFechaHora()"
+        class="w-full bg-[#0a0a0a] border border-[#444] rounded px-4 py-3 text-white focus:border-gold focus:outline-none">
+    <option value="" disabled selected>Selecciona una hora...</option>
+    <option value="10:00">10:00 AM</option>
+    <option value="10:30">10:30 AM</option>
+    <option value="11:00">11:00 AM</option>
+    <option value="11:30">11:30 AM</option>
+    <option value="12:00">12:00 PM</option>
+    <option value="12:30">12:30 PM</option>
+    <option value="13:00">01:00 PM</option>
+    <option value="13:30">01:30 PM</option>
+    <option value="14:00">02:00 PM</option>
+    <option value="14:30">02:30 PM</option>
+    <option value="15:00">03:00 PM</option>
+    <option value="15:30">03:30 PM</option>
+    <option value="16:00">04:00 PM</option>
+    <option value="16:30">04:30 PM</option>
+    <option value="17:00">05:00 PM</option>
+    <option value="17:30">05:30 PM</option>
+    <option value="18:00">06:00 PM</option>
+    <option value="18:30">06:30 PM</option>
+    <option value="19:00">07:00 PM</option>
+    <option value="19:30">07:30 PM</option>
+    <option value="20:00">08:00 PM</option>
+</select>
+                               class="w-full bg-[#0a0a0a] border border-[#444] rounded px-4 py-3 text-white focus:border-gold focus:outline-none [color-scheme:dark]">
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 3: BARBERO (Se desbloquea al elegir fecha y hora) -->
+            <section id="sec-3" class="step-locked transition-all duration-300 border-t border-[#222] pt-8">
+                <h2 class="text-xl font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-gold">03.</span> Elige a tu Barbero
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('Freiker José', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">FJ</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">Freiker José</h3>
+                    </div>
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('José Valera', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">JV</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">José Valera</h3>
+                    </div>
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('Keving Romero', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">KR</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">Keving Romero</h3>
+                    </div>
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('Aldemar Amado', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">AA</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">Aldemar Amado</h3>
+                    </div>
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('Christian Barber', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">CB</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">Christian Barber</h3>
+                    </div>
+                    <div class="barber-card cursor-pointer p-4 border border-[#333] rounded bg-[#111] hover:border-gold transition text-center" onclick="elegirBarbero('Cualquiera disponible', this)">
+                        <div class="w-12 h-12 bg-[#222] text-gold font-black rounded-full mx-auto mb-2 flex items-center justify-center pointer-events-none">★</div>
+                        <h3 class="font-bold uppercase text-xs pointer-events-none">Cualquiera</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 4: MODALIDAD DE PAGO (Se desbloquea al elegir barbero) -->
+            <section id="sec-4" class="step-locked transition-all duration-300 border-t border-[#222] pt-8">
+                <h2 class="text-xl font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-gold">04.</span> Modalidad de Pago
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="pago-card card-selected cursor-pointer p-5 border border-[#333] rounded bg-[#111] transition" onclick="elegirPago('Pagar en el Local', this)">
+                        <h3 class="font-bold uppercase text-sm text-gold pointer-events-none">Pagar en el Local</h3>
+                        <p class="text-xs text-gray-400 mt-1 pointer-events-none">Efectivo, Nequi o Daviplata al finalizar.</p>
+                    </div>
+                    <div class="pago-card cursor-pointer p-5 border border-[#333] rounded bg-[#111] hover:border-gold transition" onclick="elegirPago('Pago Anticipado (Nequi/Transferencia)', this)">
+                        <h3 class="font-bold uppercase text-sm pointer-events-none">Pagar de una vez</h3>
+                        <p class="text-xs text-gray-400 mt-1 pointer-events-none">Transferencia anticipada por WhatsApp.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN FIJO + DATOS + BOTÓN CONFIRMAR -->
+        <aside class="w-full lg:w-1/3 bg-[#111] border border-[#222] rounded p-6 sticky top-24">
+            <h3 class="text-lg font-black uppercase tracking-widest border-b border-[#333] pb-3 mb-4">Resumen de Reserva</h3>
+
+            <div class="flex justify-between items-center mb-1">
+                <span id="res-servicio" class="font-bold text-base uppercase text-gold">Elige un servicio</span>
+                <span id="res-precio" class="text-2xl font-black">$0</span>
+            </div>
+            <p id="res-duracion" class="text-xs text-gray-400 mb-5">0 min de servicio</p>
+
+            <div class="space-y-3 text-sm border-b border-[#333] pb-5 mb-5">
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Fecha</span>
+                    <span id="res-fecha" class="font-bold">Pendiente</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Horario</span>
+                    <span id="res-hora" class="font-bold">Pendiente</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Barbero</span>
+                    <span id="res-barbero" class="font-bold">Pendiente</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Pago</span>
+                    <span id="res-pago" class="font-bold text-gold">Pagar en el Local</span>
+                </div>
+            </div>
+
+            <h4 class="font-bold uppercase tracking-widest text-xs text-gray-400 mb-3">Tus Datos de Contacto</h4>
+            <div class="space-y-3 mb-6">
+                <div>
+                    <label class="block text-[11px] text-gray-500 uppercase mb-1">Nombre y Apellido (Solo letras)</label>
+                    <input type="text" id="inputNombre" placeholder="Ej. Juan Pérez"
+                           oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')"
+                           class="w-full bg-[#0a0a0a] border border-[#333] rounded px-3 py-2 text-white text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-gray-500 uppercase mb-1">Teléfono (Solo números)</label>
+                    <input type="tel" id="inputTelefono" maxlength="10" placeholder="Ej. 3115037987"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           class="w-full bg-[#0a0a0a] border border-[#333] rounded px-3 py-2 text-white text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-gray-500 uppercase mb-1">Correo Electrónico</label>
+                    <input type="email" id="inputEmail" placeholder="correo@ejemplo.com"
+                           class="w-full bg-[#0a0a0a] border border-[#333] rounded px-3 py-2 text-white text-sm focus:border-gold focus:outline-none">
+                </div>
+            </div>
+
+            <button type="button" id="btnConfirmar" onclick="confirmarReserva()"
+                    class="w-full bg-gold hover:bg-white text-black font-black py-4 rounded uppercase tracking-widest text-sm transition shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+                CONFIRMAR RESERVA
+            </button>
+        </aside>
+
+    </main>
+
+    <script>
+        const reserva = {
+            servicio: '',
+            precio: 0,
+            duracion: 0,
+            fecha: '',
+            hora: '',
+            barbero: '',
+            pago: 'Pagar en el Local'
+        };
+
+        // Bloquear fechas pasadas en el calendario
+        document.getElementById('inputFecha').min = new Date().toISOString().split('T')[0];
+
+        function elegirServicio(nombre, precio, duracion, elemento) {
+            reserva.servicio = nombre;
+            reserva.precio = precio;
+            reserva.duracion = duracion;
+
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('card-selected'));
+            elemento.classList.add('card-selected');
+
+            // Actualizar resumen
+            document.getElementById('res-servicio').textContent = nombre;
+            document.getElementById('res-precio').textContent = '$' + precio.toLocaleString('es-CO');
+            document.getElementById('res-duracion').textContent = duracion + ' min de servicio';
+
+            // Desbloquear Paso 2
+            document.getElementById('sec-2').classList.remove('step-locked');
+            document.getElementById('ind-2').classList.add('text-gold');
+        }
+
+        function validarFechaHora() {
+            const fecha = document.getElementById('inputFecha').value;
+            const hora = document.getElementById('inputHora').value;
+
+            reserva.fecha = fecha;
+            reserva.hora = hora;
+
+            document.getElementById('res-fecha').textContent = fecha || 'Pendiente';
+            document.getElementById('res-hora').textContent = hora || 'Pendiente';
+
+            // Desbloquear Paso 3 cuando ambos estén llenos
+            if (fecha && hora) {
+                document.getElementById('sec-3').classList.remove('step-locked');
+                document.getElementById('ind-3').classList.add('text-gold');
+            }
+        }
+
+        function elegirBarbero(nombre, elemento) {
+            reserva.barbero = nombre;
+
+            document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('card-selected'));
+            elemento.classList.add('card-selected');
+
+            document.getElementById('res-barbero').textContent = nombre;
+
+            // Desbloquear Paso 4
+            document.getElementById('sec-4').classList.remove('step-locked');
+            document.getElementById('ind-4').classList.add('text-gold');
+        }
+
+        function elegirPago(metodo, elemento) {
+            reserva.pago = metodo;
+
+            document.querySelectorAll('.pago-card').forEach(c => c.classList.remove('card-selected'));
+            elemento.classList.add('card-selected');
+
+            document.getElementById('res-pago').textContent = metodo;
+        }
+
+        async function confirmarReserva() {
+            // 1. Validar pasos completados
+            if (!reserva.servicio) return alert('Paso 1: Selecciona un servicio.');
+            if (!reserva.fecha || !reserva.hora) return alert('Paso 2: Selecciona fecha y hora.');
+            if (!reserva.barbero) return alert('Paso 3: Elige a tu barbero.');
+
+            // 2. Validar datos de contacto
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const telefono = document.getElementById('inputTelefono').value.trim();
+            const email = document.getElementById('inputEmail').value.trim();
+
+            if (nombre.length < 3) return alert('Ingresa un nombre válido (solo letras).');
+            if (telefono.length < 7) return alert('Ingresa un número de teléfono válido.');
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) return alert('Ingresa un correo electrónico real (ej: nombre@gmail.com).');
+
+            // 3. Enviar a Supabase
+            const btn = document.getElementById('btnConfirmar');
+            btn.textContent = 'GUARDANDO RESERVA...';
+            btn.disabled = true;
+
+            try {
+                const supabaseUrl = 'https://oirxthfhdmgtgcpbjenx.supabase.co';
+                const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
+                const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                const { data: customerData, error: customerError } = await db
+                    .from('customers')
+                    .insert([{ name: nombre, phone: telefono, email: email }])
+                    .select();
+
+                if (customerError) throw customerError;
+
+                const { error: appError } = await db
+                    .from('appointments')
+                    .insert([{
+                        customer_id: customerData[0].id,
+                        service_name: reserva.servicio,
+                        duration_minutes: reserva.duracion,
+                        price: reserva.precio,
+                        starts_at: `${reserva.fecha}T${reserva.hora}:00-05:00`,
+                        notes: `Barbero: ${reserva.barbero} | Pago: ${reserva.pago}`,
+                        status: 'Pendiente'
+                    }]);
+
+                if (appError) throw appError;
+
+                alert('¡Reserva confirmada con éxito, leyenda!');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error Supabase:', error);
+                alert('Error al guardar en la base de datos: ' + error.message);
+            } finally {
+                btn.textContent = 'CONFIRMAR RESERVA';
+                btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>

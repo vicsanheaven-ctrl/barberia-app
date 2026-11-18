@@ -3,53 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Rodríguez Barber Studio</title>
+    <title>FUTBARBER - Donde se arreglan las leyendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .text-gold { color: #d4af37; }
+        .bg-gold { background-color: #d4af37; }
+        .border-gold { border-color: #d4af37; }
+    </style>
 </head>
-<body class="bg-black text-white font-sans">
+<body class="bg-[#0a0a0a] text-white font-sans">
     
-    <!-- Barra de Navegación -->
-    <header class="flex justify-between items-center p-6 border-b border-gray-800">
-        <div class="text-xl font-bold tracking-widest uppercase">
-            The Rodríguez<br>
-            <span class="text-sm text-gray-400">Barber Studio</span>
-        </div>
-        <nav class="hidden md:flex space-x-6 text-sm font-bold text-gray-300">
-            <a href="#" class="hover:text-white transition">INICIO</a>
-            <a href="#" class="hover:text-white transition">BENEFICIOS</a>
-            <a href="#" class="hover:text-white transition">GALERÍA</a>
-            <a href="#" class="hover:text-white transition">UBICACIÓN & HORARIOS</a>
+    <!-- HEADER (Idéntico a tu referencia) -->
+    <header class="flex justify-between items-center p-4 md:p-6 border-b border-[#222] sticky top-0 bg-[#0a0a0a] z-50">
+        <a href="#" class="flex flex-col">
+            <span class="text-2xl font-black tracking-widest text-gold uppercase">FUTBARBER ⚽</span>
+            <span class="text-xs text-gray-500 uppercase tracking-widest">Barber Studio</span>
+        </a>
+        <nav class="hidden md:flex space-x-6 text-sm font-bold text-gray-400 uppercase tracking-wider">
+            <a href="#beneficios" class="hover:text-gold transition">Beneficios</a>
+            <a href="#testimonios" class="hover:text-gold transition">Testimonios</a>
+            <a href="#ubicacion" class="hover:text-gold transition">Ubicación & Horarios</a>
         </nav>
-        <a href="dashboard.html" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 transition inline-block">ENTRAR</a>
+        <a href="reservas.html" class="bg-gold text-black px-6 py-2 rounded text-sm font-bold uppercase transition hover:bg-white">Reservar Cita</a>
     </header>
 
-    <!-- Sección Principal (Hero) -->
-    <main class="flex flex-col md:flex-row items-center justify-between px-6 py-20 max-w-7xl mx-auto">
-        <div class="md:w-1/2 space-y-6">
-            <h1 class="text-5xl md:text-6xl font-extrabold uppercase leading-tight tracking-tight">
-                Donde el diseño, la precisión y el minimalismo se unen.
+    <!-- HERO SECTION -->
+    <section class="relative flex flex-col items-center justify-center text-center px-6 py-32 border-b border-[#222]">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
+        <div class="relative z-10 max-w-4xl">
+            <h1 class="text-5xl md:text-7xl font-black uppercase leading-tight tracking-tighter mb-6">
+                Nuestra <span class="text-gold block">Titular</span>
             </h1>
-            <p class="text-gray-400 text-lg">
-                Estudio de barbería contemporánea de alta precisión. Técnicas clásicas, navaja libre japonesa, toallas calientes al vapor de eucalipto y cortes a medida bajo estrictos estándares anatómicos.
+            <p class="text-gray-300 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">
+                El equipo que hace la diferencia. Estudio de barbería de alta precisión. Técnicas clásicas, disciplina, estilo y pasión bajo estrictos estándares anatómicos.
             </p>
-            <div class="flex space-x-4 pt-4">
-                <!-- Aquí está el botón ya modificado y conectado a reservas.html -->
-                <a href="reservas.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded text-sm transition text-center inline-block">
-                    RESERVAR CITA AHORA
+            <a href="reservas.html" class="bg-transparent border-2 border-gold text-gold hover:bg-gold hover:text-black font-black py-4 px-10 rounded uppercase tracking-widest transition">
+                Reservar Cita Ahora
+            </a>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE BENEFICIOS (Replicando la estructura "Precisión Quirúrgica") -->
+    <section id="beneficios" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Más que un corte</h2>
+            <p class="text-gray-500 uppercase tracking-widest text-sm">Todos nuestros servicios vienen con la titular</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
+                <div class="text-4xl mb-4">💆‍♂️</div>
+                <h3 class="text-xl font-bold uppercase mb-3">Rituales Sensoriales</h3>
+                <p class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida. Descompresión poro a poro para un cuidado estético superior.</p>
+            </article>
+            <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
+                <div class="text-4xl mb-4">✂️</div>
+                <h3 class="text-xl font-bold uppercase mb-3">Diseño Perimetral</h3>
+                <p class="text-gray-400 text-sm">Cejas perfiladas a navaja libre. Estudio morfológico de la estructura ósea para caídas y degradados exactos.</p>
+            </article>
+            <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
+                <div class="text-4xl mb-4">🍻</div>
+                <h3 class="text-xl font-bold uppercase mb-3">Hospitalidad Selecta</h3>
+                <p class="text-gray-400 text-sm">Bebida de cortesía exclusiva para disfrutar mientras nuestros maestros barberos aseguran tu imagen.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- AGENDA EN LÍNEA -->
+    <section class="bg-gold text-black py-16 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-black uppercase tracking-widest mb-4">Agenda en línea en tiempo real</h2>
+            <p class="text-lg font-medium mb-8">Selecciona tu maestro barbero de confianza, elige tu fecha y asegura tu sillón en menos de 2 minutos.</p>
+            <a href="reservas.html" class="bg-black text-white hover:bg-[#222] font-black py-4 px-10 rounded uppercase tracking-widest transition">
+                Ir al Sistema de Reservas
+            </a>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section id="testimonios" class="py-20 px-6 bg-[#0f0f0f]">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Testimonios Reales</h2>
+            <p class="text-gray-500 uppercase tracking-widest text-sm">Opiniones compartidas por nuestras leyendas</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <figure class="bg-[#111] p-8 border border-[#222] rounded">
+                <div class="text-gold text-lg mb-4">★★★★★</div>
+                <blockquote class="text-gray-300 italic mb-4">"Excelente servicio y trato al cliente. El equipo detrás de las leyendas sabe lo que hace."</blockquote>
+                <figcaption class="text-sm font-bold uppercase text-gray-500">— Cliente Frecuente</figcaption>
+            </figure>
+            <figure class="bg-[#111] p-8 border border-[#222] rounded">
+                <div class="text-gold text-lg mb-4">★★★★★</div>
+                <blockquote class="text-gray-300 italic mb-4">"Se los recomiendo con los ojos cerrados. Fueron verdaderamente atentos y experimenté más que un corte."</blockquote>
+                <figcaption class="text-sm font-bold uppercase text-gray-500">— Daniel</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- UBICACIÓN Y FOOTER -->
+    <section id="ubicacion" class="py-20 px-6 max-w-7xl mx-auto border-t border-[#222]">
+        <div class="flex flex-col md:flex-row gap-12">
+            <div class="md:w-1/2 space-y-6">
+                <h2 class="text-3xl font-black uppercase tracking-widest text-gold">CRA 12 #188-26 · BOGOTÁ</h2>
+                <p class="text-gray-400">Emplazados estratégicamente en el sector de Verbenal. Donde se arreglan las leyendas.</p>
+                <div class="space-y-4 pt-4">
+                    <div class="flex items-start gap-4">
+                        <span class="text-gold text-2xl">📍</span>
+                        <div>
+                            <p class="font-bold text-white uppercase text-sm tracking-wider">Dirección</p>
+                            <p class="text-gray-400 text-sm">Cra 12 #188-26, Verbenal, Bogotá D.C.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <span class="text-gold text-2xl">⏰</span>
+                        <div>
+                            <p class="font-bold text-white uppercase text-sm tracking-wider">Horario de Operación</p>
+                            <p class="text-gray-400 text-sm">Lunes a Domingo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2 bg-[#111] border border-[#222] rounded p-8 flex flex-col justify-center items-center text-center">
+                <p class="font-bold uppercase tracking-widest text-gold mb-2">Contacto Directo</p>
+                <p class="text-3xl font-black mb-6">311 503 7987</p>
+                <a href="https://wa.me/573115037987" target="_blank" class="w-full bg-transparent border border-gold text-gold hover:bg-gold hover:text-black font-bold py-3 rounded uppercase transition">
+                    Escribir al WhatsApp
                 </a>
-                <button class="bg-transparent border border-gray-500 hover:border-white text-white font-bold py-3 px-6 rounded text-sm transition">
-                    EXPLORAR SERVICIOS & TARIFAS
-                </button>
             </div>
         </div>
-        
-        <!-- Contenedor para la imagen -->
-        <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
-            <div class="w-full max-w-md h-96 bg-gray-900 rounded-lg flex items-center justify-center border border-gray-800 shadow-2xl">
-                <span class="text-gray-600 font-bold">[Aquí irá la foto de tu barbería]</span>
-            </div>
-        </div>
-    </main>
+    </section>
+
+    <footer class="border-t border-[#222] py-8 text-center bg-black">
+        <p class="text-gold font-black tracking-widest mb-2">FUTBARBER ⚽</p>
+        <p class="text-xs text-gray-500 tracking-wider">© 2026 Donde se arreglan las leyendas. Todos los derechos reservados.</p>
+    </footer>
 
 </body>
 </html>
