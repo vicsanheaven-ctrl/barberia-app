@@ -5,127 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FUTBARBER - Donde se arreglan las leyendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .text-gold { color: #d4af37; }
-        .bg-gold { background-color: #d4af37; }
-        .border-gold { border-color: #d4af37; }
+        :root { --gold: #d4af37; }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-white font-sans">
     
-    <!-- HEADER (Idéntico a tu referencia) -->
+    <!-- HEADER -->
     <header class="flex justify-between items-center p-4 md:p-6 border-b border-[#222] sticky top-0 bg-[#0a0a0a] z-50">
         <a href="#" class="flex flex-col">
-            <span class="text-2xl font-black tracking-widest text-gold uppercase">FUTBARBER ⚽</span>
-            <span class="text-xs text-gray-500 uppercase tracking-widest">Barber Studio</span>
+            <span class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</span>
+            <span class="text-[10px] text-gray-500 uppercase tracking-widest">Barber Studio</span>
         </a>
         <nav class="hidden md:flex space-x-6 text-sm font-bold text-gray-400 uppercase tracking-wider">
             <a href="#beneficios" class="hover:text-gold transition">Beneficios</a>
-            <a href="#testimonios" class="hover:text-gold transition">Testimonios</a>
-            <a href="#ubicacion" class="hover:text-gold transition">Ubicación & Horarios</a>
+            <a href="#galeria" class="hover:text-gold transition">Galería</a>
+            <a href="#ubicacion" class="hover:text-gold transition">Ubicación</a>
         </nav>
-        <a href="reservas.html" class="bg-gold text-black px-6 py-2 rounded text-sm font-bold uppercase transition hover:bg-white">Reservar Cita</a>
+        <div class="flex items-center gap-3">
+            <a href="dashboard.html" class="hidden sm:inline-block border border-[#333] text-gray-300 hover:border-gold hover:text-gold px-4 py-2 rounded text-xs font-bold uppercase transition">Admin</a>
+            <a href="reservas.html" class="bg-gold text-black px-5 py-2 rounded text-xs font-black uppercase transition hover:bg-white">Reservar Cita</a>
+        </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="relative flex flex-col items-center justify-center text-center px-6 py-32 border-b border-[#222]">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
+    <!-- HERO -->
+    <section class="relative flex flex-col items-center justify-center text-center px-6 py-32 border-b border-[#222] overflow-hidden">
+        <img id="dyn-hero-img" src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-20">
         <div class="relative z-10 max-w-4xl">
-            <h1 class="text-5xl md:text-7xl font-black uppercase leading-tight tracking-tighter mb-6">
-                Nuestra <span class="text-gold block">Titular</span>
+            <p class="text-gold text-xs font-bold uppercase tracking-[0.25em] mb-4">★ Donde se arreglan las leyendas ★</p>
+            <h1 id="dyn-hero-titulo" class="text-5xl md:text-7xl font-black uppercase leading-tight tracking-tighter mb-6 text-gold">
+                Nuestra Titular
             </h1>
-            <p class="text-gray-300 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">
-                El equipo que hace la diferencia. Estudio de barbería de alta precisión. Técnicas clásicas, disciplina, estilo y pasión bajo estrictos estándares anatómicos.
+            <p id="dyn-hero-subtitulo" class="text-gray-300 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">
+                El equipo que hace la diferencia. Estudio de barbería de alta precisión.
             </p>
-            <a href="reservas.html" class="bg-transparent border-2 border-gold text-gold hover:bg-gold hover:text-black font-black py-4 px-10 rounded uppercase tracking-widest transition">
+            <a id="dyn-hero-boton" href="reservas.html" class="bg-transparent border-2 border-gold text-gold hover:bg-gold hover:text-black font-black py-4 px-10 rounded uppercase tracking-widest transition inline-block">
                 Reservar Cita Ahora
             </a>
         </div>
     </section>
 
-    <!-- SECCIÓN DE BENEFICIOS (Replicando la estructura "Precisión Quirúrgica") -->
+    <!-- BENEFICIOS -->
     <section id="beneficios" class="py-20 px-6 max-w-7xl mx-auto">
-        <div class="text-center mb-16">
+        <div class="text-center mb-14">
             <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Más que un corte</h2>
-            <p class="text-gray-500 uppercase tracking-widest text-sm">Todos nuestros servicios vienen con la titular</p>
+            <p class="text-gray-500 uppercase tracking-widest text-xs">Todos nuestros servicios incluyen</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
-                <div class="text-4xl mb-4">💆‍♂️</div>
-                <h3 class="text-xl font-bold uppercase mb-3">Rituales Sensoriales</h3>
-                <p class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida. Descompresión poro a poro para un cuidado estético superior.</p>
+                <h3 id="dyn-b1-t" class="text-xl font-bold uppercase mb-3 text-gold">Rituales Sensoriales</h3>
+                <p id="dyn-b1-d" class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
-                <div class="text-4xl mb-4">✂️</div>
-                <h3 class="text-xl font-bold uppercase mb-3">Diseño Perimetral</h3>
-                <p class="text-gray-400 text-sm">Cejas perfiladas a navaja libre. Estudio morfológico de la estructura ósea para caídas y degradados exactos.</p>
+                <h3 id="dyn-b2-t" class="text-xl font-bold uppercase mb-3 text-gold">Diseño Perimetral</h3>
+                <p id="dyn-b2-d" class="text-gray-400 text-sm">Cejas perfiladas a navaja libre.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
-                <div class="text-4xl mb-4">🍻</div>
-                <h3 class="text-xl font-bold uppercase mb-3">Hospitalidad Selecta</h3>
-                <p class="text-gray-400 text-sm">Bebida de cortesía exclusiva para disfrutar mientras nuestros maestros barberos aseguran tu imagen.</p>
+                <h3 id="dyn-b3-t" class="text-xl font-bold uppercase mb-3 text-gold">Hospitalidad Selecta</h3>
+                <p id="dyn-b3-d" class="text-gray-400 text-sm">Bebida de cortesía exclusiva en cada sesión.</p>
             </article>
         </div>
     </section>
 
-    <!-- AGENDA EN LÍNEA -->
-    <section class="bg-gold text-black py-16 px-6 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-black uppercase tracking-widest mb-4">Agenda en línea en tiempo real</h2>
-            <p class="text-lg font-medium mb-8">Selecciona tu maestro barbero de confianza, elige tu fecha y asegura tu sillón en menos de 2 minutos.</p>
-            <a href="reservas.html" class="bg-black text-white hover:bg-[#222] font-black py-4 px-10 rounded uppercase tracking-widest transition">
-                Ir al Sistema de Reservas
-            </a>
-        </div>
-    </section>
-
-    <!-- TESTIMONIOS -->
-    <section id="testimonios" class="py-20 px-6 bg-[#0f0f0f]">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Testimonios Reales</h2>
-            <p class="text-gray-500 uppercase tracking-widest text-sm">Opiniones compartidas por nuestras leyendas</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <figure class="bg-[#111] p-8 border border-[#222] rounded">
-                <div class="text-gold text-lg mb-4">★★★★★</div>
-                <blockquote class="text-gray-300 italic mb-4">"Excelente servicio y trato al cliente. El equipo detrás de las leyendas sabe lo que hace."</blockquote>
-                <figcaption class="text-sm font-bold uppercase text-gray-500">— Cliente Frecuente</figcaption>
-            </figure>
-            <figure class="bg-[#111] p-8 border border-[#222] rounded">
-                <div class="text-gold text-lg mb-4">★★★★★</div>
-                <blockquote class="text-gray-300 italic mb-4">"Se los recomiendo con los ojos cerrados. Fueron verdaderamente atentos y experimenté más que un corte."</blockquote>
-                <figcaption class="text-sm font-bold uppercase text-gray-500">— Daniel</figcaption>
-            </figure>
-        </div>
-    </section>
-
-    <!-- UBICACIÓN Y FOOTER -->
-    <section id="ubicacion" class="py-20 px-6 max-w-7xl mx-auto border-t border-[#222]">
-        <div class="flex flex-col md:flex-row gap-12">
-            <div class="md:w-1/2 space-y-6">
-                <h2 class="text-3xl font-black uppercase tracking-widest text-gold">CRA 12 #188-26 · BOGOTÁ</h2>
-                <p class="text-gray-400">Emplazados estratégicamente en el sector de Verbenal. Donde se arreglan las leyendas.</p>
-                <div class="space-y-4 pt-4">
-                    <div class="flex items-start gap-4">
-                        <span class="text-gold text-2xl">📍</span>
-                        <div>
-                            <p class="font-bold text-white uppercase text-sm tracking-wider">Dirección</p>
-                            <p class="text-gray-400 text-sm">Cra 12 #188-26, Verbenal, Bogotá D.C.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <span class="text-gold text-2xl">⏰</span>
-                        <div>
-                            <p class="font-bold text-white uppercase text-sm tracking-wider">Horario de Operación</p>
-                            <p class="text-gray-400 text-sm">Lunes a Domingo</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- GALERÍA -->
+    <section id="galeria" class="py-20 px-6 bg-[#0f0f0f] border-y border-[#222]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Galería</h2>
+                <p class="text-gray-500 uppercase tracking-widest text-xs">Nuestro trabajo habla por sí solo</p>
             </div>
-            <div class="md:w-1/2 bg-[#111] border border-[#222] rounded p-8 flex flex-col justify-center items-center text-center">
-                <p class="font-bold uppercase tracking-widest text-gold mb-2">Contacto Directo</p>
-                <p class="text-3xl font-black mb-6">311 503 7987</p>
-                <a href="https://wa.me/573115037987" target="_blank" class="w-full bg-transparent border border-gold text-gold hover:bg-gold hover:text-black font-bold py-3 rounded uppercase transition">
+            <div id="dyn-galeria" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- UBICACIÓN -->
+    <section id="ubicacion" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+            <div class="md:w-1/2 space-y-4">
+                <h2 class="text-3xl font-black uppercase tracking-widest text-gold">Visítanos</h2>
+                <p id="dyn-direccion" class="text-white font-bold text-lg">Cra 12 #188-26, Verbenal, Bogotá D.C.</p>
+                <p id="dyn-horario" class="text-gray-400 text-sm">Lunes a Domingo · 10:00 AM - 8:00 PM</p>
+            </div>
+            <div class="md:w-1/2 w-full bg-[#111] border border-[#222] rounded p-8 text-center">
+                <p class="font-bold uppercase tracking-widest text-gold text-xs mb-2">Contacto Directo</p>
+                <p id="dyn-telefono" class="text-3xl font-black mb-6">311 503 7987</p>
+                <a id="dyn-wa-link" href="https://wa.me/573115037987" target="_blank" class="block w-full bg-transparent border border-gold text-gold hover:bg-gold hover:text-black font-bold py-3 rounded uppercase transition">
                     Escribir al WhatsApp
                 </a>
             </div>
@@ -133,9 +101,52 @@
     </section>
 
     <footer class="border-t border-[#222] py-8 text-center bg-black">
-        <p class="text-gold font-black tracking-widest mb-2">FUTBARBER ⚽</p>
-        <p class="text-xs text-gray-500 tracking-wider">© 2026 Donde se arreglan las leyendas. Todos los derechos reservados.</p>
+        <p class="text-gold font-black tracking-widest mb-2">FUTB💈RBER</p>
+        <p class="text-xs text-gray-500">© 2026 Donde se arreglan las leyendas.</p>
     </footer>
 
+    <script>
+        const supabaseUrl = 'https://oirxthfhdmgtgcpbjenx.supabase.co';
+        const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function cargarSitioDinamico() {
+            try {
+                const { data, error } = await db.from('site_config').select('content').eq('id', 1).single();
+                if (error || !data) return;
+                const c = data.content;
+
+                if (c.color_acento) document.documentElement.style.setProperty('--gold', c.color_acento);
+                if (c.hero_titulo) document.getElementById('dyn-hero-titulo').textContent = c.hero_titulo;
+                if (c.hero_subtitulo) document.getElementById('dyn-hero-subtitulo').textContent = c.hero_subtitulo;
+                if (c.hero_boton) document.getElementById('dyn-hero-boton').textContent = c.hero_boton;
+                if (c.hero_imagen) document.getElementById('dyn-hero-img').src = c.hero_imagen;
+
+                if (c.beneficio_1_titulo) document.getElementById('dyn-b1-t').textContent = c.beneficio_1_titulo;
+                if (c.beneficio_1_desc) document.getElementById('dyn-b1-d').textContent = c.beneficio_1_desc;
+                if (c.beneficio_2_titulo) document.getElementById('dyn-b2-t').textContent = c.beneficio_2_titulo;
+                if (c.beneficio_2_desc) document.getElementById('dyn-b2-d').textContent = c.beneficio_2_desc;
+                if (c.beneficio_3_titulo) document.getElementById('dyn-b3-t').textContent = c.beneficio_3_titulo;
+                if (c.beneficio_3_desc) document.getElementById('dyn-b3-d').textContent = c.beneficio_3_desc;
+
+                if (c.direccion) document.getElementById('dyn-direccion').textContent = c.direccion;
+                if (c.horario) document.getElementById('dyn-horario').textContent = c.horario;
+                if (c.telefono) {
+                    document.getElementById('dyn-telefono').textContent = c.telefono;
+                    const telLimpio = c.telefono.replace(/[^0-9]/g, '');
+                    document.getElementById('dyn-wa-link').href = `https://wa.me/57${telLimpio}`;
+                }
+
+                if (c.galeria && c.galeria.length > 0) {
+                    document.getElementById('dyn-galeria').innerHTML = c.galeria.map(url =>
+                        `<img src="${url}" class="w-full h-64 object-cover rounded border border-[#222] hover:border-gold transition">`
+                    ).join('');
+                }
+            } catch (err) {
+                console.log('Cargando versión por defecto.');
+            }
+        }
+        cargarSitioDinamico();
+    </script>
 </body>
 </html>
