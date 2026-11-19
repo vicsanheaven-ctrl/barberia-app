@@ -212,4 +212,36 @@
         cargarCitas();
     </script>
 </body>
+<!-- Pantalla de Bloqueo Admin -->
+<div id="admin-lock" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center p-4">
+    <div class="bg-[#111] border border-[#222] p-8 rounded w-full max-w-sm text-center shadow-2xl">
+        <h2 class="text-2xl font-black text-[#d4af37] tracking-widest uppercase mb-1">FUTB💈RBER</h2>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-6">Acceso Exclusivo Administración</p>
+        <input type="password" id="admin-pin" placeholder="Ingresa la clave"
+               onkeydown="if(event.key==='Enter') verificarAcceso()"
+               class="w-full bg-[#0a0a0a] border border-[#333] rounded px-4 py-3 text-white text-center tracking-widest mb-4 focus:border-[#d4af37] focus:outline-none">
+        <button onclick="verificarAcceso()" class="w-full bg-[#d4af37] hover:bg-white text-black font-black py-3 rounded uppercase text-xs tracking-widest transition">
+            Entrar al Panel
+        </button>
+        <p id="pin-error" class="text-red-500 text-xs mt-3 hidden">Clave incorrecta</p>
+    </div>
+</div>
+
+<script>
+    const CLAVE_ADMIN = 'futbarber2026'; // Cambia esta clave por la que quieras darle al dueño
+
+    if (sessionStorage.getItem('futbarber_auth') === 'ok') {
+        document.getElementById('admin-lock').style.display = 'none';
+    }
+
+    function verificarAcceso() {
+        const input = document.getElementById('admin-pin').value;
+        if (input === CLAVE_ADMIN) {
+            sessionStorage.setItem('futbarber_auth', 'ok');
+            document.getElementById('admin-lock').style.display = 'none';
+        } else {
+            document.getElementById('pin-error').classList.remove('hidden');
+        }
+    }
+</script>
 </html>
