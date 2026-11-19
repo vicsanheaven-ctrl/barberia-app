@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#0a0a0a] text-white font-sans">
 
-    <!-- HEADER LIMPIO (Solo para clientes) -->
+    <!-- HEADER LIMPIO -->
     <header class="w-full sticky top-0 bg-[#0a0a0a]/95 backdrop-blur border-b border-[#222] z-50">
         <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
             <a href="#" class="flex flex-col leading-none">
@@ -35,9 +35,11 @@
         </div>
     </header>
 
-    <!-- HERO -->
+    <!-- HERO (Soporta Foto o Video) -->
     <section class="relative flex flex-col items-center justify-center text-center px-6 py-32 border-b border-[#222] overflow-hidden">
-        <img id="dyn-hero-img" src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-20">
+        <div id="dyn-hero-media" class="absolute inset-0 w-full h-full">
+            <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop" class="w-full h-full object-cover opacity-20">
+        </div>
         <div class="relative z-10 max-w-4xl">
             <p class="text-gold text-xs font-bold uppercase tracking-[0.25em] mb-4">★ Donde se arreglan las leyendas ★</p>
             <h1 id="dyn-hero-titulo" class="text-5xl md:text-7xl font-black uppercase leading-tight tracking-tighter mb-6 text-gold">
@@ -61,27 +63,27 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b1-t" class="text-xl font-bold uppercase mb-3 text-gold">Rituales Sensoriales</h3>
-                <p id="dyn-b1-d" class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida. Descompresión poro a poro para un cuidado estético superior.</p>
+                <p id="dyn-b1-d" class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b2-t" class="text-xl font-bold uppercase mb-3 text-gold">Diseño Perimetral</h3>
-                <p id="dyn-b2-d" class="text-gray-400 text-sm">Cejas perfiladas a navaja libre. Estudio morfológico de la estructura ósea para caídas y degradados exactos.</p>
+                <p id="dyn-b2-d" class="text-gray-400 text-sm">Cejas perfiladas a navaja libre.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b3-t" class="text-xl font-bold uppercase mb-3 text-gold">Hospitalidad Selecta</h3>
-                <p id="dyn-b3-d" class="text-gray-400 text-sm">Bebida de cortesía exclusiva para disfrutar mientras nuestros maestros barberos aseguran tu imagen.</p>
+                <p id="dyn-b3-d" class="text-gray-400 text-sm">Bebida de cortesía exclusiva en cada sesión.</p>
             </article>
         </div>
     </section>
 
-    <!-- GALERÍA -->
+    <!-- GALERÍA DINÁMICA -->
     <section id="galeria" class="py-20 px-6 bg-[#0f0f0f] border-y border-[#222]">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-black uppercase tracking-widest text-gold mb-2">Galería</h2>
                 <p class="text-gray-500 uppercase tracking-widest text-xs">Nuestro trabajo habla por sí solo</p>
             </div>
-            <div id="dyn-galeria" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            <div id="dyn-galeria" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
         </div>
     </section>
 
@@ -113,6 +115,10 @@
         const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        function esVideo(url) {
+            return url && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+        }
+
         async function cargarSitioDinamico() {
             try {
                 const { data, error } = await db.from('site_config').select('content').eq('id', 1).single();
@@ -123,7 +129,13 @@
                 if (c.hero_titulo) document.getElementById('dyn-hero-titulo').textContent = c.hero_titulo;
                 if (c.hero_subtitulo) document.getElementById('dyn-hero-subtitulo').textContent = c.hero_subtitulo;
                 if (c.hero_boton) document.getElementById('dyn-hero-boton').textContent = c.hero_boton;
-                if (c.hero_imagen) document.getElementById('dyn-hero-img').src = c.hero_imagen;
+
+                if (c.hero_imagen) {
+                    const heroMedia = document.getElementById('dyn-hero-media');
+                    heroMedia.innerHTML = esVideo(c.hero_imagen)
+                        ? `<video src="${c.hero_imagen}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-30"></video>`
+                        : `<img src="${c.hero_imagen}" class="w-full h-full object-cover opacity-20">`;
+                }
 
                 if (c.beneficio_1_titulo) document.getElementById('dyn-b1-t').textContent = c.beneficio_1_titulo;
                 if (c.beneficio_1_desc) document.getElementById('dyn-b1-d').textContent = c.beneficio_1_desc;
@@ -142,7 +154,9 @@
 
                 if (c.galeria && c.galeria.length > 0) {
                     document.getElementById('dyn-galeria').innerHTML = c.galeria.map(url =>
-                        `<img src="${url}" class="w-full h-64 object-cover rounded border border-[#222] hover:border-gold transition">`
+                        esVideo(url)
+                            ? `<video src="${url}" autoplay loop muted playsinline class="w-full h-64 object-cover rounded border border-[#222] hover:border-gold transition"></video>`
+                            : `<img src="${url}" class="w-full h-64 object-cover rounded border border-[#222] hover:border-gold transition">`
                     ).join('');
                 }
             } catch (err) {

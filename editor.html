@@ -57,7 +57,7 @@
             <!-- Izquierda: Secciones -->
             <aside class="w-56 bg-[#0d0d0d] border-r border-[#222] p-4 flex flex-col gap-2 overflow-y-auto flex-shrink-0">
                 <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-2">Secciones del Sitio</p>
-                <button onclick="mostrarPanel('hero', this)" class="sec-btn sec-btn-active text-left px-3 py-2.5 rounded border border-transparent text-xs font-bold uppercase tracking-wider transition">1. Portada (Hero)</button>
+                <button onclick="mostrarPanel('hero', this)" class="sec-btn sec-btn-active text-left px-3 py-2.5 rounded border border-transparent text-xs font-bold uppercase tracking-wider transition">1. Portada (Foto/Video)</button>
                 <button onclick="mostrarPanel('beneficios', this)" class="sec-btn text-left px-3 py-2.5 rounded border border-transparent text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition">2. Beneficios</button>
                 <button onclick="mostrarPanel('galeria', this)" class="sec-btn text-left px-3 py-2.5 rounded border border-transparent text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition">3. Galería de Fotos</button>
                 <button onclick="mostrarPanel('ubicacion', this)" class="sec-btn text-left px-3 py-2.5 rounded border border-transparent text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition">4. Ubicación y Contacto</button>
@@ -68,7 +68,7 @@
             <main class="flex-1 bg-[#161616] p-6 overflow-y-auto flex justify-center">
                 <div class="w-full max-w-4xl bg-[#0a0a0a] border border-[#333] rounded-lg overflow-hidden shadow-2xl h-fit">
                     <section class="relative text-center px-6 py-20 border-b border-[#222] overflow-hidden">
-                        <img id="prev-hero-img" src="" class="absolute inset-0 w-full h-full object-cover opacity-20">
+                        <div id="prev-hero-media" class="absolute inset-0 w-full h-full"></div>
                         <div class="relative z-10">
                             <h1 id="prev-hero-titulo" class="text-4xl font-black uppercase tracking-tight mb-4 text-accent">...</h1>
                             <p id="prev-hero-subtitulo" class="text-gray-300 text-sm max-w-xl mx-auto mb-6">...</p>
@@ -117,6 +117,7 @@
             <aside class="w-80 bg-[#0d0d0d] border-l border-[#222] p-5 overflow-y-auto flex-shrink-0">
                 <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-4">Propiedades</p>
 
+                <!-- PANEL HERO -->
                 <div id="panel-hero" class="prop-panel space-y-4">
                     <div>
                         <label class="block text-xs text-gray-400 mb-1">Título Principal</label>
@@ -130,12 +131,18 @@
                         <label class="block text-xs text-gray-400 mb-1">Texto del Botón</label>
                         <input type="text" id="in-hero-boton" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm text-white focus:border-[#d4af37] focus:outline-none">
                     </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">URL Imagen de Fondo</label>
-                        <input type="text" id="in-hero-imagen" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-xs text-white focus:border-[#d4af37] focus:outline-none">
+                    <div class="pt-2 border-t border-[#222]">
+                        <label class="block text-xs font-bold text-[#d4af37] mb-2">Fondo de Portada (Foto o Video MP4)</label>
+                        <label class="block w-full text-center bg-[#1a1a1a] hover:bg-[#252525] border border-dashed border-[#d4af37] text-[#d4af37] text-xs font-bold py-3 px-3 rounded cursor-pointer transition mb-2">
+                            <span id="txt-upload-hero">+ Subir Foto o Video desde tu equipo</span>
+                            <input type="file" id="file-hero" accept="image/*,video/mp4,video/webm" onchange="subirFondoHero(this)" class="hidden">
+                        </label>
+                        <p class="text-[10px] text-gray-500 mb-2">Para videos, usa clips cortos en MP4 (máx. 15 MB).</p>
+                        <input type="text" id="in-hero-imagen" placeholder="O pega una URL directa..." oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-xs text-gray-300 focus:border-[#d4af37] focus:outline-none">
                     </div>
                 </div>
 
+                <!-- PANEL BENEFICIOS -->
                 <div id="panel-beneficios" class="prop-panel hidden space-y-5">
                     <div class="space-y-2 border-b border-[#222] pb-4">
                         <p class="text-xs font-bold text-[#d4af37]">Beneficio 1</p>
@@ -154,19 +161,27 @@
                     </div>
                 </div>
 
+                <!-- PANEL GALERÍA DINÁMICA -->
                 <div id="panel-galeria" class="prop-panel hidden space-y-4">
-                    <p class="text-xs text-gray-400">URLs de las 3 fotos de tu galería:</p>
-                    <div><label class="block text-xs text-gray-400 mb-1">Foto 1</label><input type="text" id="in-gal-0" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-xs text-white"></div>
-                    <div><label class="block text-xs text-gray-400 mb-1">Foto 2</label><input type="text" id="in-gal-1" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-xs text-white"></div>
-                    <div><label class="block text-xs text-gray-400 mb-1">Foto 3</label><input type="text" id="in-gal-2" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-xs text-white"></div>
+                    <label class="block w-full text-center bg-[#d4af37] hover:bg-white text-black text-xs font-black py-3 px-3 rounded cursor-pointer uppercase tracking-wider transition">
+                        <span id="txt-upload-gal">+ Subir Foto / Video a Galería</span>
+                        <input type="file" id="file-galeria" accept="image/*,video/mp4,video/webm" multiple onchange="subirAGaleria(this)" class="hidden">
+                    </label>
+                    <p class="text-[11px] text-gray-500">Puedes seleccionar varias fotos a la vez. Al terminar, haz clic en <b>Publicar Cambios</b> arriba.</p>
+
+                    <div id="lista-galeria-editor" class="space-y-2 pt-2 border-t border-[#222]">
+                        <!-- Se llena dinámicamente -->
+                    </div>
                 </div>
 
+                <!-- PANEL UBICACIÓN -->
                 <div id="panel-ubicacion" class="prop-panel hidden space-y-4">
                     <div><label class="block text-xs text-gray-400 mb-1">Dirección</label><input type="text" id="in-direccion" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm text-white"></div>
                     <div><label class="block text-xs text-gray-400 mb-1">Horario</label><input type="text" id="in-horario" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm text-white"></div>
                     <div><label class="block text-xs text-gray-400 mb-1">Teléfono / WhatsApp</label><input type="text" id="in-telefono" oninput="actualizarDesdeInputs()" class="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm text-white"></div>
                 </div>
 
+                <!-- PANEL ESTILO -->
                 <div id="panel-estilo" class="prop-panel hidden space-y-4">
                     <div>
                         <label class="block text-xs text-gray-400 mb-2">Color Principal de la Marca</label>
@@ -201,7 +216,11 @@
         const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let config = {};
+        let config = { galeria: [] };
+
+        function esVideo(url) {
+            return url && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+        }
 
         function mostrarPanel(nombre, btn) {
             document.querySelectorAll('.prop-panel').forEach(p => p.classList.add('hidden'));
@@ -214,11 +233,91 @@
             btn.classList.remove('text-gray-400');
         }
 
+        async function subirArchivoStorage(file) {
+            const ext = file.name.split('.').pop();
+            const nombreUnico = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+            const { error } = await db.storage.from('media').upload(nombreUnico, file);
+            if (error) throw error;
+            const { data } = db.storage.from('media').getPublicUrl(nombreUnico);
+            return data.publicUrl;
+        }
+
+        async function subirFondoHero(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const lbl = document.getElementById('txt-upload-hero');
+            lbl.textContent = 'Subiendo archivo...';
+            try {
+                const url = await subirArchivoStorage(file);
+                config.hero_imagen = url;
+                document.getElementById('in-hero-imagen').value = url;
+                document.getElementById('status-msg').textContent = 'Cambios sin guardar';
+                renderPreview();
+            } catch (err) {
+                alert('Error subiendo archivo: ' + err.message);
+            } finally {
+                lbl.textContent = '+ Subir Foto o Video desde tu equipo';
+                input.value = '';
+            }
+        }
+
+        async function subirAGaleria(input) {
+            const files = Array.from(input.files);
+            if (files.length === 0) return;
+            const lbl = document.getElementById('txt-upload-gal');
+            lbl.textContent = `Subiendo ${files.length} archivo(s)...`;
+            try {
+                if (!Array.isArray(config.galeria)) config.galeria = [];
+                for (const file of files) {
+                    const url = await subirArchivoStorage(file);
+                    config.galeria.push(url);
+                }
+                document.getElementById('status-msg').textContent = 'Cambios sin guardar';
+                renderListaGaleriaEditor();
+                renderPreview();
+            } catch (err) {
+                alert('Error subiendo a galería: ' + err.message);
+            } finally {
+                lbl.textContent = '+ Subir Foto / Video a Galería';
+                input.value = '';
+            }
+        }
+
+        function eliminarDeGaleria(index) {
+            config.galeria.splice(index, 1);
+            document.getElementById('status-msg').textContent = 'Cambios sin guardar';
+            renderListaGaleriaEditor();
+            renderPreview();
+        }
+
+        function renderListaGaleriaEditor() {
+            const cont = document.getElementById('lista-galeria-editor');
+            if (!config.galeria || config.galeria.length === 0) {
+                cont.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">No hay elementos en la galería.</p>';
+                return;
+            }
+            cont.innerHTML = config.galeria.map((url, i) => `
+                <div class="flex items-center justify-between gap-2 bg-[#111] border border-[#222] p-2 rounded">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        ${esVideo(url)
+                            ? `<video src="${url}" muted class="w-10 h-10 object-cover rounded flex-shrink-0"></video>`
+                            : `<img src="${url}" class="w-10 h-10 object-cover rounded flex-shrink-0">`
+                        }
+                        <span class="text-[11px] text-gray-400 truncate">Elemento #${i + 1}</span>
+                    </div>
+                    <button onclick="eliminarDeGaleria(${i})" class="text-xs text-red-400 hover:text-white hover:bg-red-600 px-2 py-1 rounded font-bold transition">
+                        ✕
+                    </button>
+                </div>
+            `).join('');
+        }
+
         async function cargarConfig() {
             try {
                 const { data, error } = await db.from('site_config').select('content').eq('id', 1).single();
                 if (error) throw error;
-                config = data.content;
+                config = data.content || {};
+                if (!Array.isArray(config.galeria)) config.galeria = [];
 
                 document.getElementById('in-hero-titulo').value = config.hero_titulo || '';
                 document.getElementById('in-hero-subtitulo').value = config.hero_subtitulo || '';
@@ -235,11 +334,7 @@
                 document.getElementById('in-telefono').value = config.telefono || '';
                 document.getElementById('in-color').value = config.color_acento || '#d4af37';
 
-                const gal = config.galeria || ['', '', ''];
-                document.getElementById('in-gal-0').value = gal[0] || '';
-                document.getElementById('in-gal-1').value = gal[1] || '';
-                document.getElementById('in-gal-2').value = gal[2] || '';
-
+                renderListaGaleriaEditor();
                 renderPreview();
                 document.getElementById('status-msg').textContent = 'Sincronizado';
             } catch (err) {
@@ -262,11 +357,6 @@
             config.horario = document.getElementById('in-horario').value;
             config.telefono = document.getElementById('in-telefono').value;
             config.color_acento = document.getElementById('in-color').value;
-            config.galeria = [
-                document.getElementById('in-gal-0').value,
-                document.getElementById('in-gal-1').value,
-                document.getElementById('in-gal-2').value
-            ];
             document.getElementById('status-msg').textContent = 'Cambios sin guardar';
             renderPreview();
         }
@@ -278,7 +368,13 @@
             document.getElementById('prev-hero-titulo').textContent = config.hero_titulo;
             document.getElementById('prev-hero-subtitulo').textContent = config.hero_subtitulo;
             document.getElementById('prev-hero-boton').textContent = config.hero_boton;
-            document.getElementById('prev-hero-img').src = config.hero_imagen;
+
+            const heroMedia = document.getElementById('prev-hero-media');
+            if (esVideo(config.hero_imagen)) {
+                heroMedia.innerHTML = `<video src="${config.hero_imagen}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-30"></video>`;
+            } else {
+                heroMedia.innerHTML = `<img src="${config.hero_imagen}" class="w-full h-full object-cover opacity-20">`;
+            }
 
             document.getElementById('prev-b1-t').textContent = config.beneficio_1_titulo;
             document.getElementById('prev-b1-d').textContent = config.beneficio_1_desc;
@@ -292,7 +388,9 @@
             document.getElementById('prev-telefono').textContent = config.telefono;
 
             document.getElementById('prev-galeria').innerHTML = (config.galeria || []).map(url =>
-                `<img src="${url}" class="w-full h-32 object-cover rounded border border-[#333]" onerror="this.style.opacity='0.2'">`
+                esVideo(url)
+                    ? `<video src="${url}" autoplay loop muted playsinline class="w-full h-32 object-cover rounded border border-[#333]"></video>`
+                    : `<img src="${url}" class="w-full h-32 object-cover rounded border border-[#333]" onerror="this.style.opacity='0.2'">`
             ).join('');
         }
 
