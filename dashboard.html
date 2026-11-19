@@ -12,90 +12,128 @@
         .border-gold { border-color: #d4af37; }
     </style>
 </head>
-<body class="bg-[#0a0a0a] text-white font-sans min-h-screen flex flex-col md:flex-row">
+<body class="bg-[#0a0a0a] text-white font-sans">
 
-    <!-- Menú Lateral -->
-    <aside class="w-full md:w-64 bg-[#050505] border-b md:border-b-0 md:border-r border-[#222] flex flex-col justify-between">
-        <div>
-            <div class="p-6 border-b border-[#222]">
-                <h1 class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</h1>
-                <p class="text-[11px] text-gray-500 uppercase tracking-widest mt-1">Panel de Administración</p>
-            </div>
-            <a href="editor.html" class="block px-4 py-3 text-gray-400 hover:bg-[#111] hover:text-gold rounded uppercase tracking-wider transition">Editor Visual (Web)</a>
-                <a href="dashboard.html" class="block px-4 py-3 bg-gold text-black rounded uppercase tracking-wider">Agenda de Citas</a>
-                <a href="reservas.html" class="block px-4 py-3 text-gray-400 hover:bg-[#111] hover:text-gold rounded uppercase tracking-wider transition">+ Nueva Cita</a>
-            </nav>
-        </div>
-        <div class="p-4 border-t border-[#222]">
-            <a href="index.html" class="block px-4 py-2 text-xs text-gray-400 hover:text-white hover:border-gold border border-[#333] rounded text-center uppercase tracking-widest transition">
-                Ver Sitio Público
-            </a>
-        </div>
-    </aside>
-
-    <!-- Contenido Principal -->
-    <main class="flex-1 p-6 md:p-8 overflow-x-hidden">
-        
-        <!-- Encabezado -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-[#222] pb-6">
-            <div>
-                <h2 class="text-2xl font-black uppercase tracking-widest">Gestión de Citas</h2>
-                <p class="text-xs text-gray-400 mt-1">Sincronizado en tiempo real con Supabase · Bogotá (UTC-5)</p>
-            </div>
-            <button onclick="cargarCitas()" class="bg-[#111] border border-gold text-gold hover:bg-gold hover:text-black font-bold py-2 px-5 rounded text-xs uppercase tracking-widest transition">
-                Actualizar Lista
+    <!-- PANTALLA DE BLOQUEO ADMIN -->
+    <div id="admin-lock" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center p-4">
+        <div class="bg-[#111] border border-[#222] p-8 rounded w-full max-w-sm text-center shadow-2xl">
+            <h2 class="text-2xl font-black text-[#d4af37] tracking-widest uppercase mb-1">FUTB💈RBER</h2>
+            <p class="text-xs text-gray-500 uppercase tracking-widest mb-6">Acceso Exclusivo Administración</p>
+            <input type="password" id="admin-pin" placeholder="Ingresa la clave"
+                   onkeydown="if(event.key==='Enter') verificarAcceso()"
+                   class="w-full bg-[#0a0a0a] border border-[#333] rounded px-4 py-3 text-white text-center tracking-widest mb-4 focus:border-[#d4af37] focus:outline-none">
+            <button onclick="verificarAcceso()" class="w-full bg-[#d4af37] hover:bg-white text-black font-black py-3 rounded uppercase text-xs tracking-widest transition">
+                Entrar al Panel
             </button>
-        </header>
+            <p id="pin-error" class="text-red-500 text-xs mt-3 hidden">Clave incorrecta</p>
+        </div>
+    </div>
 
-        <!-- Tarjetas de Resumen (KPIs) -->
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="bg-[#111] border border-[#222] p-5 rounded">
-                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Citas</p>
-                <p id="kpi-total" class="text-3xl font-black text-white">0</p>
-            </div>
-            <div class="bg-[#111] border border-[#222] p-5 rounded">
-                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Pendientes</p>
-                <p id="kpi-pendientes" class="text-3xl font-black text-gold">0</p>
-            </div>
-            <div class="bg-[#111] border border-[#222] p-5 rounded">
-                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Completadas</p>
-                <p id="kpi-completadas" class="text-3xl font-black text-green-400">0</p>
-            </div>
-            <div class="bg-[#111] border border-[#222] p-5 rounded">
-                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Ingresos Estimados</p>
-                <p id="kpi-ingresos" class="text-3xl font-black text-white">$0</p>
-            </div>
-        </section>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="min-h-screen flex flex-col md:flex-row">
 
-        <!-- Tabla de Reservas -->
-        <section class="bg-[#111] border border-[#222] rounded overflow-hidden">
-            <div class="p-4 border-b border-[#222] flex justify-between items-center bg-[#0d0d0d]">
-                <h3 class="font-bold uppercase text-xs tracking-widest text-gold">Reservas Registradas</h3>
-                <span id="estado-carga" class="text-xs text-gray-500">Cargando...</span>
+        <!-- Menú Lateral -->
+        <aside class="w-full md:w-64 bg-[#050505] border-b md:border-b-0 md:border-r border-[#222] flex flex-col justify-between flex-shrink-0">
+            <div>
+                <div class="p-6 border-b border-[#222]">
+                    <h1 class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</h1>
+                    <p class="text-[11px] text-gray-500 uppercase tracking-widest mt-1">Panel de Administración</p>
+                </div>
+                <nav class="p-4 space-y-2 text-sm font-bold">
+                    <a href="dashboard.html" class="block px-4 py-3 bg-gold text-black rounded uppercase tracking-wider">Agenda de Citas</a>
+                    <a href="reservas.html" class="block px-4 py-3 text-gray-400 hover:bg-[#111] hover:text-gold rounded uppercase tracking-wider transition">+ Nueva Cita</a>
+                    <a href="editor.html" class="block px-4 py-3 text-gray-400 hover:bg-[#111] hover:text-gold rounded uppercase tracking-wider transition">Editor Visual (Web)</a>
+                </nav>
             </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-[#0a0a0a] text-gray-500 uppercase text-xs border-b border-[#222]">
-                        <tr>
-                            <th class="px-5 py-4">Fecha y Hora</th>
-                            <th class="px-5 py-4">Cliente</th>
-                            <th class="px-5 py-4">Servicio</th>
-                            <th class="px-5 py-4">Barbero / Pago</th>
-                            <th class="px-5 py-4">Estado</th>
-                            <th class="px-5 py-4 text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-citas" class="divide-y divide-[#222]">
-                        <!-- Las filas se cargan automáticamente desde Supabase -->
-                    </tbody>
-                </table>
+            <div class="p-4 border-t border-[#222] space-y-2">
+                <a href="index.html" target="_blank" class="block px-4 py-2 text-xs text-gray-400 hover:text-white hover:border-gold border border-[#333] rounded text-center uppercase tracking-widest transition">
+                    Ver Sitio Público
+                </a>
+                <button onclick="cerrarSesion()" class="w-full px-4 py-2 text-xs text-red-400 hover:bg-red-950/40 border border-red-900/40 rounded uppercase tracking-widest transition">
+                    Cerrar Sesión
+                </button>
             </div>
-        </section>
+        </aside>
 
-    </main>
+        <!-- Contenido -->
+        <main class="flex-1 p-6 md:p-8 overflow-x-hidden">
+            <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-[#222] pb-6">
+                <div>
+                    <h2 class="text-2xl font-black uppercase tracking-widest">Gestión de Citas</h2>
+                    <p class="text-xs text-gray-400 mt-1">Sincronizado en tiempo real con Supabase · Bogotá (UTC-5)</p>
+                </div>
+                <button onclick="cargarCitas()" class="bg-[#111] border border-gold text-gold hover:bg-gold hover:text-black font-bold py-2 px-5 rounded text-xs uppercase tracking-widest transition">
+                    Actualizar Lista
+                </button>
+            </header>
+
+            <!-- KPIs -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-[#111] border border-[#222] p-5 rounded">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Citas</p>
+                    <p id="kpi-total" class="text-3xl font-black text-white">0</p>
+                </div>
+                <div class="bg-[#111] border border-[#222] p-5 rounded">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Pendientes</p>
+                    <p id="kpi-pendientes" class="text-3xl font-black text-gold">0</p>
+                </div>
+                <div class="bg-[#111] border border-[#222] p-5 rounded">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Completadas</p>
+                    <p id="kpi-completadas" class="text-3xl font-black text-green-400">0</p>
+                </div>
+                <div class="bg-[#111] border border-[#222] p-5 rounded">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Ingresos Estimados</p>
+                    <p id="kpi-ingresos" class="text-3xl font-black text-white">$0</p>
+                </div>
+            </section>
+
+            <!-- Tabla -->
+            <section class="bg-[#111] border border-[#222] rounded overflow-hidden">
+                <div class="p-4 border-b border-[#222] flex justify-between items-center bg-[#0d0d0d]">
+                    <h3 class="font-bold uppercase text-xs tracking-widest text-gold">Reservas Registradas</h3>
+                    <span id="estado-carga" class="text-xs text-gray-500">Cargando...</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-[#0a0a0a] text-gray-500 uppercase text-xs border-b border-[#222]">
+                            <tr>
+                                <th class="px-5 py-4">Fecha y Hora</th>
+                                <th class="px-5 py-4">Cliente</th>
+                                <th class="px-5 py-4">Servicio</th>
+                                <th class="px-5 py-4">Barbero / Pago</th>
+                                <th class="px-5 py-4">Estado</th>
+                                <th class="px-5 py-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-citas" class="divide-y divide-[#222]"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script>
+        const CLAVE_ADMIN = 'futbarber2026';
+
+        if (sessionStorage.getItem('futbarber_auth') === 'ok') {
+            document.getElementById('admin-lock').style.display = 'none';
+        }
+
+        function verificarAcceso() {
+            const input = document.getElementById('admin-pin').value;
+            if (input === CLAVE_ADMIN) {
+                sessionStorage.setItem('futbarber_auth', 'ok');
+                document.getElementById('admin-lock').style.display = 'none';
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        function cerrarSesion() {
+            sessionStorage.removeItem('futbarber_auth');
+            location.reload();
+        }
+
         const supabaseUrl = 'https://oirxthfhdmgtgcpbjenx.supabase.co';
         const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -106,7 +144,6 @@
             estadoCarga.textContent = 'Sincronizando...';
 
             try {
-                // Traer citas junto con los datos del cliente
                 const { data, error } = await db
                     .from('appointments')
                     .select('*, customers(name, phone, email)')
@@ -114,11 +151,7 @@
 
                 if (error) throw error;
 
-                // Calcular KPIs
-                let pendientes = 0;
-                let completadas = 0;
-                let ingresos = 0;
-
+                let pendientes = 0, completadas = 0, ingresos = 0;
                 data.forEach(cita => {
                     if (cita.status === 'Pendiente') pendientes++;
                     if (cita.status === 'Completada') completadas++;
@@ -130,7 +163,6 @@
                 document.getElementById('kpi-completadas').textContent = completadas;
                 document.getElementById('kpi-ingresos').textContent = '$' + ingresos.toLocaleString('es-CO');
 
-                // Renderizar tabla
                 if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-8 text-center text-gray-500">No hay reservas registradas todavía.</td></tr>`;
                     estadoCarga.textContent = '0 registros';
@@ -166,21 +198,15 @@
                                 <div class="font-bold uppercase text-xs">${cita.service_name}</div>
                                 <div class="text-xs text-gray-400">$${(cita.price || 0).toLocaleString('es-CO')} · ${cita.duration_minutes || 0} min</div>
                             </td>
-                            <td class="px-5 py-4 text-xs text-gray-300">
-                                ${cita.notes || '-'}
-                            </td>
+                            <td class="px-5 py-4 text-xs text-gray-300">${cita.notes || '-'}</td>
                             <td class="px-5 py-4">
                                 <span class="px-3 py-1 rounded text-[11px] font-bold uppercase ${badgeColor}">
                                     ${cita.status || 'Pendiente'}
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-right whitespace-nowrap space-x-2">
-                                <button onclick="cambiarEstado('${cita.id}', 'Completada')" class="bg-green-900/50 hover:bg-green-600 text-green-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">
-                                    Completar
-                                </button>
-                                <button onclick="cambiarEstado('${cita.id}', 'Cancelada')" class="bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">
-                                    Cancelar
-                                </button>
+                                <button onclick="cambiarEstado('${cita.id}', 'Completada')" class="bg-green-900/50 hover:bg-green-600 text-green-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">Completar</button>
+                                <button onclick="cambiarEstado('${cita.id}', 'Cancelada')" class="bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white px-2.5 py-1 rounded text-xs font-bold transition">Cancelar</button>
                             </td>
                         </tr>
                     `;
@@ -190,58 +216,20 @@
             } catch (err) {
                 console.error(err);
                 estadoCarga.textContent = 'Error de conexión';
-                tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-8 text-center text-red-400">Error cargando citas: ${err.message}</td></tr>`;
             }
         }
 
         async function cambiarEstado(id, nuevoEstado) {
             try {
-                const { error } = await db
-                    .from('appointments')
-                    .update({ status: nuevoEstado })
-                    .eq('id', id);
-
+                const { error } = await db.from('appointments').update({ status: nuevoEstado }).eq('id', id);
                 if (error) throw error;
                 cargarCitas();
             } catch (err) {
-                alert('No se pudo actualizar el estado: ' + err.message);
+                alert('No se pudo actualizar: ' + err.message);
             }
         }
 
-        // Cargar citas automáticamente al abrir la página
         cargarCitas();
     </script>
 </body>
-<!-- Pantalla de Bloqueo Admin -->
-<div id="admin-lock" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center p-4">
-    <div class="bg-[#111] border border-[#222] p-8 rounded w-full max-w-sm text-center shadow-2xl">
-        <h2 class="text-2xl font-black text-[#d4af37] tracking-widest uppercase mb-1">FUTB💈RBER</h2>
-        <p class="text-xs text-gray-500 uppercase tracking-widest mb-6">Acceso Exclusivo Administración</p>
-        <input type="password" id="admin-pin" placeholder="Ingresa la clave"
-               onkeydown="if(event.key==='Enter') verificarAcceso()"
-               class="w-full bg-[#0a0a0a] border border-[#333] rounded px-4 py-3 text-white text-center tracking-widest mb-4 focus:border-[#d4af37] focus:outline-none">
-        <button onclick="verificarAcceso()" class="w-full bg-[#d4af37] hover:bg-white text-black font-black py-3 rounded uppercase text-xs tracking-widest transition">
-            Entrar al Panel
-        </button>
-        <p id="pin-error" class="text-red-500 text-xs mt-3 hidden">Clave incorrecta</p>
-    </div>
-</div>
-
-<script>
-    const CLAVE_ADMIN = 'futbarber2026'; // Cambia esta clave por la que quieras darle al dueño
-
-    if (sessionStorage.getItem('futbarber_auth') === 'ok') {
-        document.getElementById('admin-lock').style.display = 'none';
-    }
-
-    function verificarAcceso() {
-        const input = document.getElementById('admin-pin').value;
-        if (input === CLAVE_ADMIN) {
-            sessionStorage.setItem('futbarber_auth', 'ok');
-            document.getElementById('admin-lock').style.display = 'none';
-        } else {
-            document.getElementById('pin-error').classList.remove('hidden');
-        }
-    }
-</script>
 </html>

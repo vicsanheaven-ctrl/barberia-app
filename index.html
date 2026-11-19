@@ -14,21 +14,24 @@
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-white font-sans">
-    
-    <!-- HEADER -->
-    <a href="dashboard.html" class="hidden sm:inline-block border border-[#333] text-gray-300 hover:border-gold hover:text-gold px-4 py-2 rounded text-xs font-bold uppercase transition">Admin</a>
-        <a href="#" class="flex flex-col">
-            <span class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</span>
-            <span class="text-[10px] text-gray-500 uppercase tracking-widest">Barber Studio</span>
-        </a>
-        <nav class="hidden md:flex space-x-6 text-sm font-bold text-gray-400 uppercase tracking-wider">
-            <a href="#beneficios" class="hover:text-gold transition">Beneficios</a>
-            <a href="#galeria" class="hover:text-gold transition">Galería</a>
-            <a href="#ubicacion" class="hover:text-gold transition">Ubicación</a>
-        </nav>
-        <div class="flex items-center gap-3">
-            <a href="dashboard.html" class="hidden sm:inline-block border border-[#333] text-gray-300 hover:border-gold hover:text-gold px-4 py-2 rounded text-xs font-bold uppercase transition">Admin</a>
-            <a href="reservas.html" class="bg-gold text-black px-5 py-2 rounded text-xs font-black uppercase transition hover:bg-white">Reservar Cita</a>
+
+    <!-- HEADER LIMPIO (Solo para clientes) -->
+    <header class="w-full sticky top-0 bg-[#0a0a0a]/95 backdrop-blur border-b border-[#222] z-50">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+            <a href="#" class="flex flex-col leading-none">
+                <span class="text-2xl font-black tracking-widest text-gold uppercase">FUTB💈RBER</span>
+                <span class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Barber Studio</span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-8 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                <a href="#beneficios" class="hover:text-gold transition">Beneficios</a>
+                <a href="#galeria" class="hover:text-gold transition">Galería</a>
+                <a href="#ubicacion" class="hover:text-gold transition">Ubicación</a>
+            </nav>
+
+            <a href="reservas.html" class="bg-gold text-black px-5 py-2.5 rounded text-xs font-black uppercase tracking-wider transition hover:bg-white">
+                Reservar Cita
+            </a>
         </div>
     </header>
 
@@ -41,7 +44,7 @@
                 Nuestra Titular
             </h1>
             <p id="dyn-hero-subtitulo" class="text-gray-300 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">
-                El equipo que hace la diferencia. Estudio de barbería de alta precisión.
+                El equipo que hace la diferencia. Estudio de barbería de alta precisión. Técnicas clásicas, disciplina, estilo y pasión.
             </p>
             <a id="dyn-hero-boton" href="reservas.html" class="bg-transparent border-2 border-gold text-gold hover:bg-gold hover:text-black font-black py-4 px-10 rounded uppercase tracking-widest transition inline-block">
                 Reservar Cita Ahora
@@ -58,15 +61,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b1-t" class="text-xl font-bold uppercase mb-3 text-gold">Rituales Sensoriales</h3>
-                <p id="dyn-b1-d" class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida.</p>
+                <p id="dyn-b1-d" class="text-gray-400 text-sm">Mascarilla facial e hidratación capilar incluida. Descompresión poro a poro para un cuidado estético superior.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b2-t" class="text-xl font-bold uppercase mb-3 text-gold">Diseño Perimetral</h3>
-                <p id="dyn-b2-d" class="text-gray-400 text-sm">Cejas perfiladas a navaja libre.</p>
+                <p id="dyn-b2-d" class="text-gray-400 text-sm">Cejas perfiladas a navaja libre. Estudio morfológico de la estructura ósea para caídas y degradados exactos.</p>
             </article>
             <article class="bg-[#111] p-8 border border-[#222] rounded hover:border-gold transition">
                 <h3 id="dyn-b3-t" class="text-xl font-bold uppercase mb-3 text-gold">Hospitalidad Selecta</h3>
-                <p id="dyn-b3-d" class="text-gray-400 text-sm">Bebida de cortesía exclusiva en cada sesión.</p>
+                <p id="dyn-b3-d" class="text-gray-400 text-sm">Bebida de cortesía exclusiva para disfrutar mientras nuestros maestros barberos aseguran tu imagen.</p>
             </article>
         </div>
     </section>
