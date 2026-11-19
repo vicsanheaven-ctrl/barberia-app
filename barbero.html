@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Agenda - FUTBARBER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .text-gold { color: #d4af37; }
+        .bg-gold { background-color: #d4af37; }
+        .border-gold { border-color: #d4af37; }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] text-white font-sans min-h-screen">
+
+    <!-- PANTALLA DE INGRESO POR BARBERO -->
+    <div id="login-barbero" class="fixed inset-0 bg-[#050505] z-50 flex items-center justify-center p-4">
+        <div class="bg-[#111] border border-[#222] p-7 rounded-lg w-full max-w-sm shadow-2xl">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-black text-gold tracking-widest uppercase">FUTB💈RBER</h1>
+                <p class="text-[11px] text-gray-500 uppercase tracking-widest mt-1">Portal de Barberos</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[11px] text-gray-400 uppercase font-bold mb-1.5">Selecciona tu nombre</label>
+                    <select id="select-barbero" class="w-full bg-[#0a0a0a] border border-[#333] rounded px-3 py-3 text-white text-sm focus:border-gold focus:outline-none">
+                        <option value="" disabled selected>Elige tu usuario...</option>
+                        <option value="Freiker José">Freiker José</option>
+                        <option value="José Valera">José Valera</option>
+                        <option value="Keving Romero">Keving Romero</option>
+                        <option value="Aldemar Amado">Aldemar Amado</option>
+                        <option value="Christian Barber">Christian Barber</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] text-gray-400 uppercase font-bold mb-1.5">PIN de acceso</label>
+                    <input type="password" id="input-pin" inputmode="numeric" maxlength="6" placeholder="••••"
+                           onkeydown="if(event.key==='Enter') iniciarSesionBarbero()"
+                           class="w-full bg-[#0a0a0a] border border-[#333] rounded px-4 py-3 text-white text-center text-lg tracking-[0.4em] focus:border-gold focus:outline-none">
+                </div>
+
+                <button onclick="iniciarSesionBarbero()" class="w-full bg-gold hover:bg-white text-black font-black py-3.5 rounded uppercase text-xs tracking-widest transition">
+                    Ver Mi Agenda
+                </button>
+                <p id="login-error" class="text-red-500 text-xs text-center hidden">Nombre o PIN incorrecto</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL DEL BARBERO (OPTIMIZADO PARA CELULAR) -->
+    <div id="vista-agenda" class="hidden max-w-2xl mx-auto pb-12">
+
+        <!-- Header -->
+        <header class="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur border-b border-[#222] px-4 py-4 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] text-gold uppercase font-bold tracking-widest">FUTB💈RBER · La Titular</p>
+                <h2 id="nombre-barbero-activo" class="text-lg font-black uppercase tracking-wide">Barbero</h2>
+            </div>
+            <button onclick="cerrarSesion()" class="text-[11px] text-gray-400 hover:text-red-400 border border-[#333] px-3 py-1.5 rounded uppercase font-bold transition">
+                Salir
+            </button>
+        </header>
+
+        <main class="p-4 space-y-5">
+
+            <!-- Selector de Día (Por defecto HOY) -->
+            <div class="bg-[#111] border border-[#222] rounded-lg p-4 flex items-center justify-between gap-3">
+                <div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Agenda del día</p>
+                    <p id="fecha-legible" class="text-sm font-bold text-gold capitalize">Hoy</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="date" id="filtro-fecha" onchange="cargarAgendaDia()"
+                           class="bg-[#0a0a0a] border border-[#333] rounded px-3 py-2 text-xs text-white focus:border-gold focus:outline-none [color-scheme:dark]">
+                    <button onclick="cargarAgendaDia()" class="bg-[#1a1a1a] hover:bg-gold hover:text-black border border-[#333] text-gold px-3 py-2 rounded text-xs font-bold transition" title="Actualizar">
+                        ↻
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumen rápido del día -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-[#111] border border-[#222] rounded-lg p-3 text-center">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Total Hoy</p>
+                    <p id="stat-total" class="text-2xl font-black text-white mt-0.5">0</p>
+                </div>
+                <div class="bg-[#111] border border-[#222] rounded-lg p-3 text-center">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Pendientes</p>
+                    <p id="stat-pendientes" class="text-2xl font-black text-gold mt-0.5">0</p>
+                </div>
+                <div class="bg-[#111] border border-[#222] rounded-lg p-3 text-center">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Listas</p>
+                    <p id="stat-completadas" class="text-2xl font-black text-green-400 mt-0.5">0</p>
+                </div>
+            </div>
+
+            <!-- Lista de Citas del Día -->
+            <section>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400">Tus Citas Programadas</h3>
+                    <span id="estado-sync" class="text-[11px] text-gray-500">Cargando...</span>
+                </div>
+
+                <div id="lista-citas" class="space-y-3">
+                    <!-- Tarjetas de citas generadas dinámicamente -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // PINES DE CADA BARBERO (Puedes cambiarlos aquí cuando quieras)
+        const PINES_BARBEROS = {
+            'Freiker José': '1001',
+            'José Valera': '1002',
+            'Keving Romero': '1003',
+            'Aldemar Amado': '1004',
+            'Christian Barber': '1005'
+        };
+
+        const supabaseUrl = 'https://oirxthfhdmgtgcpbjenx.supabase.co';
+        const supabaseKey = 'sb_publishable_MBFYZrFRGAaIL6F7pBBFFA_NTQ9_3tp';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let barberoActual = sessionStorage.getItem('futbarber_barbero') || '';
+
+        function obtenerFechaHoyColombia() {
+            return new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'America/Bogota',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(new Date());
+        }
+
+        function formatearFechaBonita(fechaISO) {
+            const [y, m, d] = fechaISO.split('-').map(Number);
+            const fecha = new Date(y, m - 1, d);
+            return fecha.toLocaleDateString('es-CO', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
+            });
+        }
+
+        function iniciarSesionBarbero() {
+            const nombre = document.getElementById('select-barbero').value;
+            const pin = document.getElementById('input-pin').value.trim();
+
+            if (!nombre || PINES_BARBEROS[nombre] !== pin) {
+                document.getElementById('login-error').classList.remove('hidden');
+                return;
+            }
+
+            barberoActual = nombre;
+            sessionStorage.setItem('futbarber_barbero', nombre);
+            mostrarAgenda();
+        }
+
+        function cerrarSesion() {
+            sessionStorage.removeItem('futbarber_barbero');
+            location.reload();
+        }
+
+        function mostrarAgenda() {
+            document.getElementById('login-barbero').classList.add('hidden');
+            document.getElementById('vista-agenda').classList.remove('hidden');
+            document.getElementById('nombre-barbero-activo').textContent = barberoActual;
+
+            const inputFecha = document.getElementById('filtro-fecha');
+            if (!inputFecha.value) {
+                inputFecha.value = obtenerFechaHoyColombia();
+            }
+            cargarAgendaDia();
+        }
+
+        async function cargarAgendaDia() {
+            const fecha = document.getElementById('filtro-fecha').value || obtenerFechaHoyColombia();
+            document.getElementById('fecha-legible').textContent = formatearFechaBonita(fecha);
+
+            const contenedor = document.getElementById('lista-citas');
+            const estadoSync = document.getElementById('estado-sync');
+            estadoSync.textContent = 'Actualizando...';
+
+            const inicioDia = `${fecha}T00:00:00-05:00`;
+            const finDia = `${fecha}T23:59:59-05:00`;
+
+            try {
+                const { data, error } = await db
+                    .from('appointments')
+                    .select('*, customers(name, phone)')
+                    .gte('starts_at', inicioDia)
+                    .lte('starts_at', finDia)
+                    .ilike('notes', `%Barbero: ${barberoActual}%`)
+                    .order('starts_at', { ascending: true });
+
+                if (error) throw error;
+
+                let pendientes = 0;
+                let completadas = 0;
+                data.forEach(c => {
+                    if (c.status === 'Pendiente') pendientes++;
+                    if (c.status === 'Completada') completadas++;
+                });
+
+                document.getElementById('stat-total').textContent = data.length;
+                document.getElementById('stat-pendientes').textContent = pendientes;
+                document.getElementById('stat-completadas').textContent = completadas;
+                estadoSync.textContent = `${data.length} cita(s)`;
+
+                if (data.length === 0) {
+                    contenedor.innerHTML = `
+                        <div class="bg-[#111] border border-[#222] rounded-lg p-8 text-center">
+                            <p class="text-gray-400 text-sm font-bold">No tienes citas programadas para este día.</p>
+                            <p class="text-xs text-gray-600 mt-1">Cuando un cliente agende contigo aparecerá aquí.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                contenedor.innerHTML = data.map(cita => {
+                    const hora = new Date(cita.starts_at).toLocaleTimeString('es-CO', {
+                        timeZone: 'America/Bogota',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+
+                    const cliente = cita.customers?.name || 'Cliente';
+                    const telefono = cita.customers?.phone || '';
+                    const waLink = telefono ? `https://wa.me/57${telefono}` : '#';
+
+                    // Extraer modalidad de pago de notes si existe
+                    const pagoMatch = (cita.notes || '').split('|')[1]?.trim() || 'Pago: En local';
+
+                    let badge = 'bg-yellow-900/40 text-gold border border-gold/40';
+                    if (cita.status === 'Completada') badge = 'bg-green-900/40 text-green-400 border border-green-500/40';
+                    if (cita.status === 'Cancelada') badge = 'bg-red-900/40 text-red-400 border border-red-500/40';
+
+                    return `
+                        <div class="bg-[#111] border border-[#222] rounded-lg p-4 space-y-3">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <span class="text-xl font-black text-gold font-mono">${hora}</span>
+                                    <h4 class="text-base font-bold text-white mt-0.5">${cliente}</h4>
+                                </div>
+                                <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase ${badge}">
+                                    ${cita.status || 'Pendiente'}
+                                </span>
+                            </div>
+
+                            <div class="border-t border-[#222] pt-3 flex flex-wrap justify-between gap-2 text-xs text-gray-400">
+                                <span><b class="text-white uppercase">${cita.service_name}</b> · ${cita.duration_minutes || 0} min</span>
+                                <span class="text-gray-300 font-bold">$${(cita.price || 0).toLocaleString('es-CO')}</span>
+                            </div>
+
+                            <div class="text-[11px] text-gray-500">${pagoMatch}</div>
+
+                            <div class="flex gap-2 pt-2">
+                                ${telefono ? `
+                                    <a href="${waLink}" target="_blank" class="flex-1 text-center bg-[#1a1a1a] hover:bg-green-700 text-green-400 hover:text-white border border-green-900/50 py-2.5 rounded text-xs font-bold uppercase transition">
+                                        WhatsApp
+                                    </a>
+                                ` : ''}
+                                ${cita.status !== 'Completada' ? `
+                                    <button onclick="marcarCompletada('${cita.id}')" class="flex-1 bg-gold hover:bg-white text-black py-2.5 rounded text-xs font-black uppercase transition">
+                                        Marcar Lista
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+                estadoSync.textContent = 'Error';
+                contenedor.innerHTML = `<p class="text-red-400 text-xs text-center py-6">Error cargando citas: ${err.message}</p>`;
+            }
+        }
+
+        async function marcarCompletada(id) {
+            try {
+                const { error } = await db
+                    .from('appointments')
+                    .update({ status: 'Completada' })
+                    .eq('id', id);
+                if (error) throw error;
+                cargarAgendaDia();
+            } catch (err) {
+                alert('No se pudo actualizar: ' + err.message);
+            }
+        }
+
+        // Si ya había iniciado sesión en esta pestaña, entra directo
+        if (barberoActual && PINES_BARBEROS[barberoActual]) {
+            mostrarAgenda();
+        }
+    </script>
+</body>
+</html>
